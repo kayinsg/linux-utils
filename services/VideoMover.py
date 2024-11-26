@@ -2,11 +2,9 @@ import os
 import subprocess
 from core.Finder import FileFinder, Finder
 from core.FileHandler import FileMover, FileService
-# Note that this is a more extensible module than the FileSelector
-# implemented within the original core classes
 
 
-class FlexibleFileSelector:
+class DestinationPathSelector:
     def __init__(self, registryPath):
         self.registryPath = registryPath
 
@@ -47,9 +45,26 @@ class FlexibleFileSelector:
         return cleanPath
 
 
-class VideoFileMover:
+class Video:
     def __init__(self, recipientDirectory):
         self.recipientDirectory = recipientDirectory
+
+    def move(self, destinationPath):
+        path = self.recipientDirectory
+        videoFiles = self.findVideoFilesInDirectory(path)
+
+        self.moveVideoFilesToPath(videoFiles, destinationPath)
+
+    def findVideoFilesInDirectory(self, path):
+        findCommand: object = FileFinder(
+            "mp4",
+            path
+        )
+
+        videoFilesWithinPath: list[str] = Finder(
+            findCommand
+        ).find()
+        return videoFilesWithinPath
 
     def moveVideoFilesToPath(self, files, destinationDirectory):
         fileMover = FileMover(
@@ -61,28 +76,16 @@ class VideoFileMover:
         FileService(fileMover).executeCommand()
 
 
-def findVideoFilesInDirectory(path):
-    findCommand: object = FileFinder(
-        "mp4",
-        path
-    )
-
-    videoFilesWithinPath: list[str] = Finder(
-        findCommand
-    ).find()
-    return videoFilesWithinPath
-
-
 def main():
-    videoLocations = "/home/kayinfire/Desktop/videoLocations"
+    videoLocations = (
+        "/home/kayinfire/Desktop/videoLocations"
+    )
     path = os.getenv('OLDPWD')
-
-    videoFiles = findVideoFilesInDirectory(path)
-
-    destinationPathSelector = FlexibleFileSelector(videoLocations)
-    destinationPath = destinationPathSelector.gatherDestinationPathFromUser()
-
-    VideoFileMover(path).moveVideoFilesToPath(videoFiles, destinationPath)
+    destinationPath = (
+        DestinationPathSelector(videoLocations)
+        .gatherDestinationPathFromUser()
+    )
+    Video(path).move(destinationPath)
 
 
 main()
