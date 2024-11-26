@@ -220,7 +220,7 @@ class FileMover(FileUtilsInterface):
                     return True
             except (OSError, subprocess.CalledProcessError) as error:
                 print("")
-                print(f"[ ERROR ] {error}")
+                print(f"[ SYSTEM ERROR ] {error}")
                 return False
 
     def displayCompletionToUser(self, completionProcess: bool):
