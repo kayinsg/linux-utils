@@ -7,32 +7,38 @@ from core.FileHandler import FileMover, FileService
 
 
 class FlexibleFileSelector:
+    def __init__(self, registryPath):
+        self.registryPath = registryPath
 
-    def readDestinationPathsFromRegistry(registryPath):
+    def gatherDestinationPathFromUser(self):
+        return self.readDestinationPathsFromRegistry()
+
+    def readDestinationPathsFromRegistry(self):
         unixReadCommand = subprocess.run(
-            ['cat', registryPath],
+            ['cat', self.registryPath],
             check=True,
             capture_output=True,
             text=True
         )
-        return unixReadCommand.stdout
+        return self.allowUserToSelectDestinationPath(unixReadCommand.stdout)
 
-    def allowUserToSelectDestinationPath(filesFromRegistry):
+    def allowUserToSelectDestinationPath(self, destinationRegistry):
         messageToUser = (
             "Select the Directory You'd Like To Move The Files To"
         )
 
         fileSelectorCommand = subprocess.run(
             ['fzf', f'--prompt={messageToUser}'],
-            input=filesFromRegistry,
+            input=destinationRegistry,
             text=True,
             check=True,
             capture_output=True
         )
-        userDestinationPath = fileSelectorCommand.stdout
-        return FlexibleFileSelector._truncateNewLineFromPath(userDestinationPath)
 
-    def _truncateNewLineFromPath(path):
+        userDestinationPath = self._truncateNewLineFromPath(fileSelectorCommand.stdout)
+        return userDestinationPath
+
+    def _truncateNewLineFromPath(self, path):
         cleanPath = path.strip()
         if cleanPath != path:
             print('The path had unparsable characters.')
@@ -73,15 +79,10 @@ def main():
 
     videoFiles = findVideoFilesInDirectory(path)
 
-    destinationPaths = (
-        FlexibleFileSelector.readDestinationPathsFromRegistry(videoLocations)
-    )
+    fileSelector = FlexibleFileSelector(videoLocations)
+    destinationPath = fileSelector.gatherDestinationPathFromUser()
 
-    userDestinationPath = (
-        FlexibleFileSelector.allowUserToSelectDestinationPath(destinationPaths)
-    )
-
-    VideoFileMover(path).moveVideoFilesToPath(videoFiles, userDestinationPath)
+    VideoFileMover(path).moveVideoFilesToPath(videoFiles, destinationPath)
 
 
 main()

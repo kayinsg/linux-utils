@@ -2,7 +2,7 @@ from core.Finder import FileFinder, Finder
 from core.FileHandler import FileSelector, FileService
 import os
 
-previousDirectory = os.getenv('OLDPWD')
+currentDirectory = os.getenv('OLDPWD')
 userPattern = input(
     "Please Enter The Pattern You are Searching For\n"
 )
@@ -19,5 +19,5 @@ def selectEntries(fileSearchEntries):
     FileService(selector).executeCommand()
 
 
-searchEntries = getSearchEntries(userPattern, previousDirectory)
+searchEntries = getSearchEntries(userPattern, currentDirectory)
 selectEntries(searchEntries)
