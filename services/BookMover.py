@@ -62,7 +62,7 @@ class BookFileMover:
             self.moveFiles(bookFiles, destinationFilePath)
         else:
             print("")
-            print('No More Book Files Left to Check')
+            print('[ INFO ] No More Book Files Left to Check')
 
     def gatherBookFilePaths(self, bookExtensions: deque):
         bookExtensions = self.bookExtensions
@@ -95,7 +95,7 @@ class BookFileMover:
             FileService(bookMover).executeCommand()
         except TypeError:
             print("")
-            print('No Book Files To Move')
+            print('[ ERROR ] No Book Files To Move')
 
 
 bookPath = "/home/kayinfire/Documents/books/"

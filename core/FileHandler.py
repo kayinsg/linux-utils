@@ -90,7 +90,7 @@ class FileSelector(FileUtilsInterface):
             self.selectEntryFromFzf()
             remove(self.temporaryFile)
         else:
-            print("There were no results from your RipGrep search.")
+            print("[ ERROR ] There were no results from your RipGrep search.")
 
     def writeLinesToTemporaryFile(self):
         with open(self.temporaryFile, 'w') as file:
