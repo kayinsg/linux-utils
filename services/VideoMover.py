@@ -38,10 +38,6 @@ class DestinationPathSelector:
 
     def _truncateNewLineFromPath(self, path):
         cleanPath = path.strip()
-        if cleanPath != path:
-            print('The path had unparsable characters.')
-            print('Cleaned Path:')
-            print(cleanPath)
         return cleanPath
 
 
