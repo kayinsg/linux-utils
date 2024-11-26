@@ -1,22 +1,12 @@
-import re
+import subprocess
+import pyperclip
 
-zipFilePath = (
-    "/home/kayinfire/Downloads/reinventSelfImage/Reinvent your self-image to be more confident and successful/Reinvent your self-image to be more confident and successful.zip"
-)
+def openFilePathsInFZF(self):
+    readFile = ['cat', self.temporaryFile]
+    filePaths = subprocess.run(readFile, stdout=subprocess.PIPE).stdout
+    openPathInFZF = ['fzf'],
+    userSelectedFilePath = subprocess.run(openPathInFZF, input = filePaths).stdout
 
-
-
-print(ZipPathHandler(zipFilePath).getFinalPath())
-# print("")
-# print('Base Directory:')
-# print(baseDirectory)
-# print('This Will Be Added')
-# print("")
-# print('File Name Without Extension:')
-# print(filenameNoExtension)
-# print("")
-# print('This is supplementary')
-# print('It is used in another function, namely the extractFullFileName')
-# print("")
-# print('Absolute File Name:')
-# print(finalFinalPath)
+def copyPathToClipboard(self, filePath):
+    enclosedPath = f'"{filePath}"'
+    pyperclip.copy(enclosedPath)

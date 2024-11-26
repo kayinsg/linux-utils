@@ -1,4 +1,5 @@
 from shutil import move
+import traceback
 import subprocess
 from os import remove
 from os import path
@@ -9,6 +10,7 @@ import re as regex
 import sys as system
 from typing import NamedTuple
 from pathlib import Path
+import pyperclip
 
 from core.Finder import FileFinder, Finder
 
@@ -80,46 +82,53 @@ class FileUtilsInterface(ABC):
 class FileSelector(FileUtilsInterface):
     def __init__(self, searchEntries: list[str]) -> None:
         self.searchEntries = searchEntries
-        peeth = currentDirectory()
-        fullTemporaryFilePath = Path(peeth).joinpath('selectorEntries.txt')
+        fullTemporaryFilePath = Path(
+            currentDirectory()
+        ).joinpath('selectorEntries.txt')
         self.temporaryFile = fullTemporaryFilePath
 
     def execute(self) -> None:
-        if self.searchEntries:
-            self.writeLinesToTemporaryFile()
-            self.selectEntryFromFzf()
-            remove(self.temporaryFile)
-        else:
-            print("[ ERROR ] There were no results from your RipGrep search.")
+        try:
+            if self.searchEntries:
+                self.writeLinesToTemporaryFile()
+                filePath = self.letUserSelectFilePath()
+                if filePath:
+                    self.copyPathToClipboard(filePath)
+                else:
+                    print(
+                        '[ INFO ] There Is No File To Copy To Clipboard'
+                    )
+                remove(self.temporaryFile)
+            else:
+                print(
+                    "[ ERROR ] "
+                    "There Were No Results To Select "
+                    "Through FZF From Your RipGrep Search."
+                )
+        except (TypeError, UnboundLocalError):
+            print('[ ERROR ] Failed To Select File Path')
 
     def writeLinesToTemporaryFile(self):
         with open(self.temporaryFile, 'w') as file:
             for searchEntry in self.searchEntries:
                 file.writelines(f"{searchEntry}\n")
 
-    def selectEntryFromFzf(self):
-        commands = [
-            ['cat', self.temporaryFile],
-            ['fzf'],
-            ['xsel', '-ib']
-        ]
-        inputData = None
-        for command in commands:
-            inputData = self.runShellCommand(inputData, command)
-        inputData.communicate()
+    def letUserSelectFilePath(self):
+        readFile = ['cat', self.temporaryFile]
+        filePaths = subprocess.run(
+            readFile, stdout=subprocess.PIPE, text=True
+        ).stdout
+        openPathInFZF = ['fzf']
+        userSelectedFilePath = subprocess.run(
+            openPathInFZF, input=filePaths, text=True,
+            capture_output=True
+        ).stdout
+        return userSelectedFilePath
 
-    def runShellCommand(self, inputStream, shellCommandList: list):
-        result = subprocess.Popen(
-            shellCommandList,
-            stdin=inputStream,
-            stdout=subprocess.PIPE
-        )
-        noOutputCommands = ['xsel']
-        for command in shellCommandList:
-            if command in noOutputCommands:
-                return result
-        else:
-            return result.stdout
+    def copyPathToClipboard(self, filePath):
+        sanitizedFilePath = filePath.strip()
+        enclosedPath = f'"{sanitizedFilePath}"'
+        pyperclip.copy(enclosedPath)
 
 
 class FileDecompressor(FileUtilsInterface):

@@ -79,8 +79,8 @@ def main():
 
     videoFiles = findVideoFilesInDirectory(path)
 
-    fileSelector = FlexibleFileSelector(videoLocations)
-    destinationPath = fileSelector.gatherDestinationPathFromUser()
+    destinationPathSelector = FlexibleFileSelector(videoLocations)
+    destinationPath = destinationPathSelector.gatherDestinationPathFromUser()
 
     VideoFileMover(path).moveVideoFilesToPath(videoFiles, destinationPath)
 

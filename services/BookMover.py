@@ -98,7 +98,7 @@ class BookFileMover:
             print('[ ERROR ] No Book Files To Move')
 
 
-bookPath = "/home/kayinfire/Documents/books/"
+bookPath = "/home/kayinfire/Documents/books/transferToOnedrive/"
 finalPath = DirectoryValidator(bookPath).execute()
 sourcePath = os.getenv('OLDPWD')
 BookFileMover(sourcePath).move(finalPath)
