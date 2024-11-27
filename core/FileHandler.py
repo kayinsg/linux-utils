@@ -192,7 +192,7 @@ class FileMover(FileUtilsInterface):
 
             if directoryExists:
                 print("")
-                print(f"[ SYSTEM INFO ] {directory} Exists")
+                print(f"[ SYSTEM INFO ] '{directory}' Exists")
                 print('[ INFO ] Proceeding To Move Files.')
             else:
                 self._createDirectory(directory)

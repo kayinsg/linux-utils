@@ -2,6 +2,7 @@ import os
 import subprocess
 from core.Finder import FileFinder, Finder
 from core.FileHandler import FileMover, FileService
+from pathlib import Path
 
 
 class DestinationPathSelector:
@@ -55,10 +56,12 @@ class VideoMover:
         self.moveVideoFilesToPath(videoFiles, destinationPath)
 
     def findVideoFilesInDirectory(self, path: str):
-        videoFilesWithinPath: list[str] = Finder(
-            FileFinder("mp4", path)
-        ).find()
-        return videoFilesWithinPath
+        workingDirectory = Path(path)
+        videoFilesInDirectory = list()
+        for videFile in workingDirectory.glob('*.mp4'):
+            videoFilesInDirectory.append(videFile)
+
+        return videoFilesInDirectory
 
     def moveVideoFilesToPath(self, files, destinationDirectory):
         fileMover = FileMover(
