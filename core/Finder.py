@@ -21,43 +21,53 @@ class FileFinder(FinderInterface):
 
     def find(self):
         try:
-            locateAllFilesCommand = []
-            if self.path == "/home/kayinfire":
-                locateAllFilesCommand = [
-                    'rg',
-                    '--files',
-                    f'{self.path}'
-                ]
-            else:
-                locateAllFilesCommand = [
-                    'rg',
-                    '--files',
-                    '--hidden',
-                    f'{self.path}'
-                ]
-            findPatternCommand = ['rg', f'{self.pattern}']
-
-            filesWithinDirectory = subprocess.run(
-                locateAllFilesCommand,
-                text=True,
-                check=True,
-                stdout=subprocess.PIPE
+            filesInPath = self.locateAllFiles()
+            filesMatchingPattern = self.locateFilesMatchingPattern(
+                filesInPath
             )
-            filesMatchingPattern = subprocess.run(
-                findPatternCommand,
-                text=True,
-                check=True,
-                capture_output=True,
-                input=filesWithinDirectory.stdout,
-            )
-            finalOutput = filesMatchingPattern.stdout.splitlines()
-            return finalOutput
+            return filesMatchingPattern
         except subprocess.CalledProcessError:
             print(
                 '[ ERROR ] '
                 'RipGrep was unable to find files matching '
                 f'\"{self.pattern}\"'
             )
+
+    def locateAllFiles(self):
+        locateAllFilesCommand = []
+        if self.path == "/home/kayinfire":
+            locateAllFilesCommand = [
+                'rg',
+                '--files',
+                f'{self.path}'
+            ]
+        else:
+            locateAllFilesCommand = [
+                'rg',
+                '--files',
+                '--hidden',
+                f'{self.path}'
+            ]
+        filesWithinDirectory = subprocess.run(
+            locateAllFilesCommand,
+            text=True,
+            check=True,
+            stdout=subprocess.PIPE
+        )
+        return filesWithinDirectory.stdout
+
+    def locateFilesMatchingPattern(self, filesInDirectory):
+        findPattern = ['rg', f'{self.pattern}']
+
+        filesMatchingPattern = subprocess.run(
+            findPattern,
+            input=filesInDirectory,
+            text=True,
+            check=True,
+            capture_output=True,
+        )
+        finalOutput = filesMatchingPattern.stdout.splitlines()
+        return finalOutput
 
 
 class DirectoryFinder(FinderInterface):
