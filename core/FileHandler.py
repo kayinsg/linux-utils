@@ -135,7 +135,9 @@ class FileSelector(FileUtilsInterface):
 
 class FileDecompressor(FileUtilsInterface):
     def __init__(self, path):
-        self.zipFiles: list = Finder(FileFinder("zip", path)).find()
+        self.zipFiles: list = Finder(
+            FileFinder("zip", path)
+        ).find("file")
 
     def execute(self) -> None:
         zipFiles = self.zipFiles

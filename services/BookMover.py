@@ -104,4 +104,5 @@ def moveBookFilesToBookFolder():
     sourcePath = os.getenv('OLDPWD')
     BookFileMover(sourcePath).move(finalPath)
 
+
 moveBookFilesToBookFolder()

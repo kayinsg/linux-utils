@@ -53,8 +53,8 @@ class FileFinder(FinderInterface):
             text=True,
             check=True,
             stdout=subprocess.PIPE
-        )
-        return filesWithinDirectory.stdout
+        ).stdout
+        return filesWithinDirectory
 
     def locateFilesMatchingPattern(self, filesInDirectory):
         findPattern = ['rg', f'{self.pattern}']
@@ -107,3 +107,7 @@ class Finder:
     def find(self) -> list[str]:
         searchEntries = self.finder.find()
         return searchEntries
+
+    def findDirectories(self):
+        filesInDirectory = self.find()
+        return DirectoryFinder(filesInDirectory).find()
