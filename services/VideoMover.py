@@ -33,7 +33,10 @@ class DestinationPathSelector:
             capture_output=True
         )
 
-        userDestinationPath = self._truncateNewLineFromPath(fileSelectorCommand.stdout)
+        userDestinationPath = self._truncateNewLineFromPath(
+            fileSelectorCommand.stdout
+        )
+
         return userDestinationPath
 
     def _truncateNewLineFromPath(self, path):
@@ -41,7 +44,7 @@ class DestinationPathSelector:
         return cleanPath
 
 
-class Video:
+class VideoMover:
     def __init__(self, recipientDirectory):
         self.recipientDirectory = recipientDirectory
 
@@ -51,14 +54,9 @@ class Video:
 
         self.moveVideoFilesToPath(videoFiles, destinationPath)
 
-    def findVideoFilesInDirectory(self, path):
-        findCommand: object = FileFinder(
-            "mp4",
-            path
-        )
-
+    def findVideoFilesInDirectory(self, path: str):
         videoFilesWithinPath: list[str] = Finder(
-            findCommand
+            FileFinder("mp4", path)
         ).find()
         return videoFilesWithinPath
 
@@ -76,12 +74,12 @@ def main():
     videoLocations = (
         "/home/kayinfire/Desktop/videoLocations"
     )
-    path = os.getenv('OLDPWD')
+    workingPath = os.getenv('OLDPWD')
     destinationPath = (
         DestinationPathSelector(videoLocations)
         .gatherDestinationPathFromUser()
     )
-    Video(path).move(destinationPath)
+    VideoMover(workingPath).move(destinationPath)
 
 
 main()

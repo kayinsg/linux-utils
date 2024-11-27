@@ -118,11 +118,13 @@ class FileSelector(FileUtilsInterface):
         filePaths = subprocess.run(
             readFile, stdout=subprocess.PIPE, text=True
         ).stdout
+
         openPathInFZF = ['fzf']
         userSelectedFilePath = subprocess.run(
             openPathInFZF, input=filePaths, text=True,
             capture_output=True
         ).stdout
+
         return userSelectedFilePath
 
     def copyPathToClipboard(self, filePath):
@@ -240,8 +242,6 @@ class FileMover(FileUtilsInterface):
                 "[ ERROR ] "
                 "Moving The Files Ultimately Turned Out To Be Unsuccessful"
             )
-
-
 
 class FileDeleter(FileUtilsInterface):
     def __init__(self,
