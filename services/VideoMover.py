@@ -58,8 +58,8 @@ class VideoMover:
     def findVideoFilesInDirectory(self, path: str):
         workingDirectory = Path(path)
         videoFilesInDirectory = list()
-        for videFile in workingDirectory.glob('*.mp4'):
-            videoFilesInDirectory.append(videFile)
+        for videoFile in workingDirectory.glob('*.mp4'):
+            videoFilesInDirectory.append(videoFile)
 
         return videoFilesInDirectory
 
@@ -73,16 +73,26 @@ class VideoMover:
         FileService(fileMover).executeCommand()
 
 
-def main():
-    videoLocations = (
-        "/home/kayinfire/Desktop/videoLocations"
-    )
-    workingPath = os.getenv('OLDPWD')
-    destinationPath = (
-        DestinationPathSelector(videoLocations)
-        .gatherDestinationPathFromUser()
-    )
-    VideoMover(workingPath).move(destinationPath)
+class VideoOrganizer:
+    def __init__(self, videoDestinationRegistry, sourcePath):
+        self.videoDestinationRegistry = videoDestinationRegistry
+        self.sourcePath = sourcePath
+
+    def organize(self):
+        workingPath = self.sourcePath
+        destinationPath = self._getDestinationPathFromUser()
+        VideoMover(workingPath).move(destinationPath)
+
+    def _getDestinationPathFromUser(self):
+        pathRegistry = self.videoDestinationRegistry
+        destinationPath = (
+            DestinationPathSelector(pathRegistry)
+            .gatherDestinationPathFromUser()
+        )
+        return destinationPath
 
 
-main()
+VideoOrganizer(
+    "/home/kayinfire/Desktop/videoLocations",
+    os.getenv('OLDPWD')
+).organize()

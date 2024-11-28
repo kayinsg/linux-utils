@@ -70,35 +70,12 @@ class FileFinder(FinderInterface):
         return finalOutput
 
 
-class DirectoryFinder(FinderInterface):
-    def __init__(self, listOfFiles):
-        self.listOfFiles = listOfFiles
-
-    def find(self) -> list[str]:
-        filePaths                   = self.listOfFiles
-        unorderedDirectoryPaths     = self.getDirectoryPaths(filePaths)
-        directoryPathsSortedByDepth = self.getDirectoryPathsSortedByDepth(unorderedDirectoryPaths)
-        return directoryPathsSortedByDepth
-
-    def getDirectoryPaths(self, listOfPaths):
-        directoryPaths = set(map(self._removeFileSuffix, listOfPaths))
-        return list(directoryPaths)
-
-    def _removeFileSuffix(self, filePath):
-        searchEntriesIterator = findAllIterations("/", filePath)
-        searchEntries         = list(searchEntriesIterator)
-        positionOfFilePath    = searchEntries[-1].start()
-        parentPath            = filePath[0:positionOfFilePath]
-        return parentPath
-
-    def getDirectoryPathsSortedByDepth(self, listOfFiles) -> list[str]:
-        return sorted(listOfFiles, key = self.getNumberOfPathSeparators)
-
-    def getNumberOfPathSeparators(self, paths):
-        pathCounter = Counter(paths)
-        numberOfPathSepartors = pathCounter['/']
-        return numberOfPathSepartors
-
+# class DirectoryFinder(FinderInterface):
+#     def __init__(self, listOfFiles):
+#         self.listOfFiles = listOfFiles
+#
+#     def find(self) -> list[str]:
+#
 
 class Finder:
     def __init__(self, finder):

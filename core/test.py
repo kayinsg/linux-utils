@@ -1,12 +1,30 @@
-import subprocess
-import pyperclip
+def main():
+    videoLocations = (
+        "/home/kayinfire/Desktop/videoLocations"
+    )
+    workingPath = os.getenv('OLDPWD')
+    destinationPath = (
+        DestinationPathSelector(videoLocations)
+        .gatherDestinationPathFromUser()
+    )
+    VideoMover(workingPath).move(destinationPath)
 
-def openFilePathsInFZF(self):
-    readFile = ['cat', self.temporaryFile]
-    filePaths = subprocess.run(readFile, stdout=subprocess.PIPE).stdout
-    openPathInFZF = ['fzf'],
-    userSelectedFilePath = subprocess.run(openPathInFZF, input = filePaths).stdout
 
-def copyPathToClipboard(self, filePath):
-    enclosedPath = f'"{filePath}"'
-    pyperclip.copy(enclosedPath)
+class VideoOrganizer:
+    def __init__(self, videoDestinationRegistry, sourcePath, destinationPath):
+        self.videoDestinationRegistry = videoDestinationRegistry
+        self.sourcePath = sourcePath
+        self.destinationPath = self._getDestinationPathFromUser()
+
+    def organize(self):
+        workingPath = self.sourcePath
+        destinationPath = self.destinationPath
+        VideoMover(workingPath).move(destinationPath)
+
+    def _getDestinationPathFromUser(self):
+        pathRegistry = self.videoDestinationRegistry
+        destinationPath = (
+            DestinationPathSelector(pathRegistry)
+            .gatherDestinationPathFromUser()
+        )
+        return destinationPath

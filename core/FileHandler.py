@@ -236,7 +236,7 @@ class FileMover(FileUtilsInterface):
         print("")
         if completionProcess:
             print(
-                "[ INFO ] All Files Have Been Successfully Moved To {}"
+                '[ INFO ] All Files Have Been Successfully Moved To "{}"'
                 .format(self.destinationDirectory)
             )
         else:
