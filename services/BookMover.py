@@ -1,10 +1,9 @@
-from core.Finder import FileFinder, Finder
-from core.FileHandler import FileMover, FileService
-import os
+from core.FileHandler import FileMover, FileSelector, FileService
+from os import remove, getenv
 import pendulum
 import subprocess
-from itertools import chain
-from collections import deque
+from pathlib import Path
+from core.utils import fetchDirectoriesInPath, getListOfLinesFromFile
 
 
 class BookPathGenerator:
@@ -26,12 +25,12 @@ class DirectoryValidator:
         self.bookPath = BookPathGenerator(parentPath).fetchFinalBookPath()
 
     def execute(self):
-        pathToBeVerified = self.bookPath
-        if os.path.isdir(pathToBeVerified):
-            return pathToBeVerified
+        pathToBeVerified = Path(self.bookPath)
+        if pathToBeVerified.exists():
+            return pathToBeVerified.as_posix()
         else:
             self.createDirectory(pathToBeVerified)
-            return pathToBeVerified
+            return pathToBeVerified.as_posix()
 
     def createDirectory(self, directory):
         try:
@@ -45,44 +44,43 @@ class DirectoryValidator:
 class BookFileMover:
     def __init__(self, path):
         self.path = path
-        self.bookExtensions = deque(
-            [
-                'azw3$',
-                'epub$',
-                'mobi$',
-                'pdf$',
-                'djvu$',
-                'chm$'
-            ]
-        )
+        self.bookExtensions = [
+                '*azw3',
+                '*epub',
+                '*mobi',
+                '*pdf',
+                '*djvu',
+                '*chm'
+        ]
 
     def move(self, destinationFilePath):
-        bookFiles = self.gatherBookFilePaths(self.bookExtensions)
+        bookFiles = self.getBookFiles(self.path, self.bookExtensions)
         if bookFiles:
             self.moveFiles(bookFiles, destinationFilePath)
         else:
             print("")
             print('[ INFO ] No More Book Files Left to Check')
 
-    def gatherBookFilePaths(self, bookExtensions: deque):
-        bookExtensions = self.bookExtensions
-        accumulatedBookFiles: list[str] = list()
+    def getBookFiles(self, path, bookExtensions: list):
+        sourcePath = Path(path)
+        bookFilePaths: list = list()
 
         for extension in bookExtensions:
-            bookFilesForExtension = FileFinder(
-                extension,
-                self.path
+            listOfMatchingPathObjects = list(
+                sourcePath.glob(extension)
             )
-            bookFiles = Finder(bookFilesForExtension).find()
-            if bookFiles:
-                accumulatedBookFiles = list(chain(
-                    accumulatedBookFiles,
-                    bookFiles
-                ))
-            else:
-                pass
 
-        return accumulatedBookFiles
+            if listOfMatchingPathObjects:
+                for matchingPath in listOfMatchingPathObjects:
+                    actualFilePath = matchingPath.absolute().as_posix()
+                    bookFilePaths.append(actualFilePath)
+            else:
+                print(
+                    f'[ SYSTEM INFO ] files containing the extension '
+                    f'"{extension}" were unable to be found'
+                )
+
+        return bookFilePaths
 
     def moveFiles(self, bookFiles, destinationFilePath):
         try:
@@ -98,10 +96,52 @@ class BookFileMover:
             print('[ ERROR ] No Book Files To Move')
 
 
+class PathRegistry:
+    def __init__(self, bookPath):
+        self.bookPath = Path(
+            bookPath
+        )
+        self.bookTemp = Path(
+            self.bookPath / "folderRegistry.txt"
+        )
+
+    def retrieve(self):
+        bookRegistryAlreadyExits = self.bookTemp.exists()
+        if bookRegistryAlreadyExits:
+            print(f'[ INFO ] "{self.bookTemp}" already exists')
+            print('Proceeding With Program')
+        else:
+            foldersInPath = fetchDirectoriesInPath(self.bookPath)
+            userMainFolders = self.getMainFoldersFromUser(foldersInPath)
+            self.storeMainFoldersInFile(userMainFolders, self.bookTemp)
+
+        return self.getListOfPathsFromRegistry(self.bookTemp)
+
+    def getMainFoldersFromUser(self, foldersInPath: list):
+        mainFolders: list = list()
+        fileSelector = FileSelector(foldersInPath)
+        fileSelector.writeLinesToTemporaryFile()
+
+        while len(mainFolders) < 3:
+            mainChosenByUser = fileSelector.letUserSelectFilePath()
+            mainChosenByUser = mainChosenByUser.strip()
+            mainFolders.append(mainChosenByUser)
+        remove(fileSelector.temporaryFile)
+        return mainFolders
+
+    def storeMainFoldersInFile(self, mainFolders, bookTemp):
+        with open(bookTemp, 'w') as mainFolderRegistryFolder:
+            for folder in mainFolders:
+                mainFolderRegistryFolder.writelines(f'{folder}\n')
+
+    def getListOfPathsFromRegistry(self, tempFile):
+        return getListOfLinesFromFile(tempFile)
+
+
 def moveBookFilesToBookFolder():
+    sourcePath = str(getenv('OLDPWD'))
     bookPathParent = "/home/kayinfire/Documents/books/transferToOnedrive/"
     finalPath = DirectoryValidator(bookPathParent).execute()
-    sourcePath = os.getenv('OLDPWD')
     BookFileMover(sourcePath).move(finalPath)
 
 

@@ -1,7 +1,7 @@
 import subprocess
 from abc import ABC, abstractmethod
 from re import finditer as findAllIterations
-from collections import Counter
+# from collections import Counter
 
 
 class FinderInterface(ABC):
@@ -85,6 +85,6 @@ class Finder:
         searchEntries = self.finder.find()
         return searchEntries
 
-    def findDirectories(self):
-        filesInDirectory = self.find()
-        return DirectoryFinder(filesInDirectory).find()
+    # def findDirectories(self):
+    #     filesInDirectory = self.find()
+    #     return DirectoryFinder(filesInDirectory).find()

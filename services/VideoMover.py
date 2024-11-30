@@ -74,9 +74,9 @@ class VideoMover:
 
 
 class VideoOrganizer:
-    def __init__(self, videoDestinationRegistry, sourcePath):
-        self.videoDestinationRegistry = videoDestinationRegistry
+    def __init__(self, sourcePath, videoDestinationRegistry):
         self.sourcePath = sourcePath
+        self.videoDestinationRegistry = videoDestinationRegistry
 
     def organize(self):
         workingPath = self.sourcePath
@@ -93,6 +93,6 @@ class VideoOrganizer:
 
 
 VideoOrganizer(
-    "/home/kayinfire/Desktop/videoLocations",
-    os.getenv('OLDPWD')
+    os.getenv('OLDPWD'),
+    "/home/kayinfire/Desktop/videoLocations"
 ).organize()

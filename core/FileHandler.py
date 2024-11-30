@@ -1,18 +1,15 @@
 from shutil import move
-import traceback
 import subprocess
 from os import remove
 from os import path
 from os import getcwd as currentDirectory
 from abc import ABC, abstractmethod
-from re import search as regexSearch
 import re as regex
 import sys as system
-from typing import NamedTuple
 from pathlib import Path
 import pyperclip
 
-from core.Finder import FileFinder, Finder
+from Finder import FileFinder, Finder
 
 
 class ZipFilePathDirectoryCreator:
