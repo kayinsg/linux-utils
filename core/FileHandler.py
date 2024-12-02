@@ -7,9 +7,9 @@ from abc import ABC, abstractmethod
 import re as regex
 import sys as system
 from pathlib import Path
-import pyperclip
 
-from Finder import FileFinder, Finder
+from core.Finder import FileFinder, Finder
+from core.utils import copyPathToClipboard
 
 
 class ZipFilePathDirectoryCreator:
@@ -60,7 +60,7 @@ class ZipFilePathDirectoryCreator:
             subprocess.run(['mkdir', directory],
                            text  = True,
                            check = True)
-            print(f'[ SYSTEM INFO ] {directory} CREATED')
+            print(f'[ SYSTEM INFO ] "{directory}" CREATED')
 
         except subprocess.CalledProcessError as error:
             print('[ INFO ] An Issue Occured '
@@ -90,10 +90,10 @@ class FileSelector(FileUtilsInterface):
                 self.writeLinesToTemporaryFile()
                 filePath = self.letUserSelectFilePath()
                 if filePath:
-                    self.copyPathToClipboard(filePath)
+                    copyPathToClipboard(filePath)
                 else:
                     print(
-                        '[ INFO ] No Path Has Been Copied To The Clipboard'
+                        '[ INFO ] None Of The File Paths Have Been Copied To The Clipboard'
                     )
                 remove(self.temporaryFile)
             else:
@@ -124,17 +124,12 @@ class FileSelector(FileUtilsInterface):
 
         return userSelectedFilePath
 
-    def copyPathToClipboard(self, filePath):
-        sanitizedFilePath = filePath.strip()
-        enclosedPath = f'"{sanitizedFilePath}"'
-        pyperclip.copy(enclosedPath)
-
 
 class FileDecompressor(FileUtilsInterface):
     def __init__(self, path):
         self.zipFiles: list = Finder(
             FileFinder("zip", path)
-        ).find("file")
+        ).find()
 
     def execute(self) -> None:
         zipFiles = self.zipFiles
@@ -215,7 +210,6 @@ class FileMover(FileUtilsInterface):
         for file in files:
             try:
                 move(file, directory)
-                print("")
                 print(
                     "[→] {} \nTRANSFERRED SUCCESSFULLY"
                     .format(file)
@@ -231,11 +225,14 @@ class FileMover(FileUtilsInterface):
 
     def displayCompletionToUser(self, completionProcess: bool):
         print("")
+        destinationDirectory = self.destinationDirectory
         if completionProcess:
             print(
-                '[ INFO ] All Files Have Been Successfully Moved To "{}"'
-                .format(self.destinationDirectory)
+                '[ INFO ] All Files Have Been '
+                'Successfully Moved To "{}"'
+                .format(destinationDirectory)
             )
+            copyPathToClipboard(destinationDirectory)
         else:
             print(
                 "[ ERROR ] "

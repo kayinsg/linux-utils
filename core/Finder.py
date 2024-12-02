@@ -1,7 +1,6 @@
 import subprocess
 from abc import ABC, abstractmethod
 from re import finditer as findAllIterations
-# from collections import Counter
 
 
 class FinderInterface(ABC):

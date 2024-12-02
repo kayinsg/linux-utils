@@ -1,4 +1,5 @@
 from pathlib import Path
+import pyperclip
 
 
 def fetchDirectoriesInPath(path: Path):
@@ -19,3 +20,9 @@ def getListOfLinesFromFile(filePath):
         return filePath.read_text().splitlines()
     else:
         return Path(filePath).read_text().splitlines()
+
+
+def copyPathToClipboard(filePath):
+    sanitizedFilePath = filePath.strip()
+    enclosedPath = f'"{sanitizedFilePath}"'
+    pyperclip.copy(enclosedPath)

@@ -1,31 +1,17 @@
 from core.FileHandler import FileMover, FileSelector, FileService
 from os import remove, getenv
-import pendulum
+from pendulum import now as current
 import subprocess
-from pathlib import Path
+from pathlib import Path, PurePath
 from core.utils import fetchDirectoriesInPath, getListOfLinesFromFile
 
 
-class BookPathGenerator:
-    def __init__(self, parentPath):
-        self.parentPath = parentPath
-
-    def fetchFinalBookPath(self):
-        date = self.getFormattedDate()
-        prospectiveFileName = f"{date}-BooksToBeStored"
-        return f"{self.parentPath}{prospectiveFileName}"
-
-    def getFormattedDate(self):
-        currentDate = pendulum.now()
-        return currentDate.format("YYYY-MMM-DD")
-
-
 class DirectoryValidator:
-    def __init__(self, parentPath):
-        self.bookPath = BookPathGenerator(parentPath).fetchFinalBookPath()
+    def __init__(self, path):
+        self.path = path
 
     def execute(self):
-        pathToBeVerified = Path(self.bookPath)
+        pathToBeVerified = Path(self.path)
         if pathToBeVerified.exists():
             return pathToBeVerified.as_posix()
         else:
@@ -41,9 +27,9 @@ class DirectoryValidator:
             print("The Directory Already Exists.")
 
 
-class BookFileMover:
-    def __init__(self, path):
-        self.path = path
+class BookDirector:
+    def __init__(self, workingDirectory):
+        self.workingDirectory = workingDirectory
         self.bookExtensions = [
                 '*azw3',
                 '*epub',
@@ -54,18 +40,18 @@ class BookFileMover:
         ]
 
     def move(self, destinationFilePath):
-        bookFiles = self.getBookFiles(self.path, self.bookExtensions)
+        bookFiles = self.getBookFilesInDirectory()
         if bookFiles:
-            self.moveFiles(bookFiles, destinationFilePath)
+            self.moveBookFilesToPath(bookFiles, destinationFilePath)
         else:
             print("")
             print('[ INFO ] No More Book Files Left to Check')
 
-    def getBookFiles(self, path, bookExtensions: list):
-        sourcePath = Path(path)
+    def getBookFilesInDirectory(self):
+        sourcePath = Path(self.workingDirectory)
         bookFilePaths: list = list()
 
-        for extension in bookExtensions:
+        for extension in self.bookExtensions:
             listOfMatchingPathObjects = list(
                 sourcePath.glob(extension)
             )
@@ -82,10 +68,10 @@ class BookFileMover:
 
         return bookFilePaths
 
-    def moveFiles(self, bookFiles, destinationFilePath):
+    def moveBookFilesToPath(self, bookFiles, destinationFilePath):
         try:
             bookMover = FileMover(
-                        recipientDirectory   = self.path,
+                        recipientDirectory   = self.workingDirectory,
                         files                = bookFiles,
                         destinationDirectory = destinationFilePath
                         )
@@ -96,7 +82,7 @@ class BookFileMover:
             print('[ ERROR ] No Book Files To Move')
 
 
-class PathRegistry:
+class MainPathRegistry:
     def __init__(self, bookPath):
         self.bookPath = Path(
             bookPath
@@ -121,7 +107,6 @@ class PathRegistry:
         mainFolders: list = list()
         fileSelector = FileSelector(foldersInPath)
         fileSelector.writeLinesToTemporaryFile()
-
         while len(mainFolders) < 3:
             mainChosenByUser = fileSelector.letUserSelectFilePath()
             mainChosenByUser = mainChosenByUser.strip()
@@ -138,11 +123,23 @@ class PathRegistry:
         return getListOfLinesFromFile(tempFile)
 
 
-def moveBookFilesToBookFolder():
+def backupBookPath(path):
+    date = current().format("YYYY-MMM-DD")
+    backupFileDirectory = f"{date}-BooksToBeStored"
+    return f"{path}{backupFileDirectory}"
+
+
+def transferCurrentPathBookFiles():
     sourcePath = str(getenv('OLDPWD'))
-    bookPathParent = "/home/kayinfire/Documents/books/transferToOnedrive/"
-    finalPath = DirectoryValidator(bookPathParent).execute()
-    BookFileMover(sourcePath).move(finalPath)
+    backupPath = Path(Path.home() / 'Documents/books/transferToOnedrive')
+    finalPath = DirectoryValidator(backupPath).execute()
+    BookDirector(sourcePath).move(finalPath)
 
 
-moveBookFilesToBookFolder()
+def moveBookFilesToSubs(targetPath):
+    subPath = PurePath('Documents', 'books')
+    sourcePath = Path(Path.home(), subPath).as_posix()
+    BookDirector(sourcePath).move(targetPath)
+
+
+transferCurrentPathBookFiles()
