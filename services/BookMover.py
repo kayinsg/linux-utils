@@ -6,27 +6,6 @@ from pathlib import Path, PurePath
 from core.utils import fetchDirectoriesInPath, getListOfLinesFromFile
 
 
-class DirectoryValidator:
-    def __init__(self, path):
-        self.path = path
-
-    def execute(self):
-        pathToBeVerified = Path(self.path)
-        if pathToBeVerified.exists():
-            return pathToBeVerified.as_posix()
-        else:
-            self.createDirectory(pathToBeVerified)
-            return pathToBeVerified.as_posix()
-
-    def createDirectory(self, directory):
-        try:
-            subprocess.run(['mkdir', directory],
-                           text  = True,
-                           check = True)
-        except OSError:
-            print("The Directory Already Exists.")
-
-
 class BookDirector:
     def __init__(self, workingDirectory):
         self.workingDirectory = workingDirectory
@@ -126,7 +105,24 @@ class MainPathRegistry:
 def backupBookPath(path):
     date = current().format("YYYY-MMM-DD")
     backupFileDirectory = f"{date}-BooksToBeStored"
-    return f"{path}{backupFileDirectory}"
+    finalBackupPath = Path(path / backupFileDirectory).as_posix()
+    return finalBackupPath
+
+
+def ensureDirectoryExists(path):
+    pathToBeVerified = Path(path)
+    if pathToBeVerified.exists():
+        return pathToBeVerified.as_posix()
+    else:
+        try:
+            subprocess.run(
+                ['mkdir', pathToBeVerified.as_posix()],
+                text=True,
+                check=True
+            )
+            return pathToBeVerified.as_posix()
+        except OSError:
+            print("The Directory Already Exists.")
 
 
 def transferCurrentPathBookFiles():
