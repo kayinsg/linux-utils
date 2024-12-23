@@ -97,8 +97,9 @@ class DestinationPathSelector:
         cleanPath = path.strip()
         return cleanPath
 
+videoLocationsRegistry = Path(Path.home() / "Desktop" / "videoLocations" )
 
 VideoOrganizer(
     os.getenv('OLDPWD'),
-    "/home/kayinfire/Desktop/videoLocations"
+    videoLocationsRegistry
 ).organize()
