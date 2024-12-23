@@ -190,8 +190,11 @@ class FileMover(FileUtilsInterface):
                 self._createDirectory(directory)
                 print(f"[ SYSTEM INFO ] CREATED FOLDER {directory}")
             return directory
-        except subprocess.CalledProcessError as error:
-            print(f'[ SYSTEM ERROR ] {error}')
+        # except subprocess.CalledProcessError as error:
+        except subprocess.CalledProcessError:
+            # print(f'[ SYSTEM ERROR ] {error}')
+            self._createDirectory(directory)
+            print(f"[ SYSTEM INFO ] CREATED FOLDER {directory}")
 
     def _createDirectory(self, directory: str):
         try:

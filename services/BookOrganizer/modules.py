@@ -56,12 +56,12 @@ class BookDirector:
     def __init__(self, workingDirectory: str):
         self.workingDirectory = workingDirectory
         self.bookExtensions = [
-                '*azw3',
-                '*epub',
-                '*mobi',
-                '*djvu',
-                '*chm',
-                '*pdf'
+            '*azw3',
+            '*epub',
+            '*mobi',
+            '*djvu',
+            '*chm',
+            '*pdf',
         ]
 
     def move(self, destinationFilePath: BookPathDetails | str):
@@ -79,27 +79,21 @@ class BookDirector:
                     destinationFilePath.fullPath
                 )
         else:
-            print("")
-            print('[ INFO ] No More Book Files Left to Check')
+            pass
 
     def getBookFilesInDirectory(self):
         sourcePath = Path(self.workingDirectory)
         bookFilePaths: list = list()
 
         for extension in self.bookExtensions:
-            listOfMatchingPathObjects = list(
-                sourcePath.glob(extension)
-            )
+            listOfMatchingPathObjects = list(sourcePath.glob(extension))
 
             if listOfMatchingPathObjects:
                 for matchingPath in listOfMatchingPathObjects:
                     actualFilePath = matchingPath.absolute().as_posix()
                     bookFilePaths.append(actualFilePath)
             else:
-                print(
-                    f'[ SYSTEM INFO ] Files Containing The Extension '
-                    f'"{extension}" Were Unable To Be Found'
-                )
+                pass
 
         return bookFilePaths
 

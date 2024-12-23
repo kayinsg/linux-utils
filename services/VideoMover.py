@@ -39,13 +39,20 @@ class VideoMover:
         return videoFilesInDirectory
 
     def moveVideoFilesToPath(self, files, destinationDirectory):
-        fileMover = FileMover(
-            self.recipientDirectory,
-            files,
-            destinationDirectory
-        )
+        try:
+            fileMover = FileMover(
+                self.recipientDirectory,
+                files,
+                destinationDirectory
+            )
 
-        FileService(fileMover).executeCommand()
+            FileService(fileMover).executeCommand()
+        except TypeError as error:
+            if "None" in str(error):
+                print('[ INFO ] There were No Files To Be Moved')
+            else:
+                print('[ INFO ] Video Files Were Unable to Be Moved')
+                print(error)
 
 
 class DestinationPathSelector:
@@ -65,23 +72,26 @@ class DestinationPathSelector:
         return self.allowUserToSelectDestinationPath(unixReadCommand.stdout)
 
     def allowUserToSelectDestinationPath(self, destinationRegistry):
-        messageToUser = (
-            "Select the Directory You'd Like To Move The Files To"
-        )
+        try:
+            messageToUser = (
+                "Select the Directory You'd Like To Move The Files To"
+            )
 
-        fileSelectorCommand = subprocess.run(
-            ['fzf', f'--prompt={messageToUser}'],
-            input=destinationRegistry,
-            text=True,
-            check=True,
-            capture_output=True
-        )
+            fileSelectorCommand = subprocess.run(
+                ['fzf', f'--prompt={messageToUser}'],
+                input=destinationRegistry,
+                text=True,
+                check=True,
+                capture_output=True
+            )
 
-        userDestinationPath = self._truncateNewLineFromPath(
-            fileSelectorCommand.stdout
-        )
+            userDestinationPath = self._truncateNewLineFromPath(
+                fileSelectorCommand.stdout
+            )
 
-        return userDestinationPath
+            return userDestinationPath
+        except subprocess.SubprocessError:
+            print('[ INFO ] You Have Exited The File Selection')
 
     def _truncateNewLineFromPath(self, path):
         cleanPath = path.strip()
