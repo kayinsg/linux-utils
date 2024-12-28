@@ -1,6 +1,6 @@
 import subprocess
 from abc import ABC, abstractmethod
-from re import finditer as findAllIterations
+from pathlib import Path
 
 
 class FinderInterface(ABC):
@@ -34,7 +34,7 @@ class FileFinder(FinderInterface):
 
     def locateAllFiles(self):
         locateAllFilesCommand = []
-        if self.path == "/home/kayinfire":
+        if self.path == Path.home():
             locateAllFilesCommand = [
                 'rg',
                 '--files',
@@ -65,8 +65,7 @@ class FileFinder(FinderInterface):
             check=True,
             capture_output=True,
         )
-        finalOutput = filesMatchingPattern.stdout.splitlines()
-        return finalOutput
+        return filesMatchingPattern.stdout.splitlines()
 
 
 # class DirectoryFinder(FinderInterface):
