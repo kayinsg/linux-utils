@@ -3,17 +3,14 @@ from core.utils import fetchDirectoriesInPath, getListOfLinesFromFile
 from pathlib import Path, PurePath
 from os import remove, getenv
 from pendulum import now as current
-
-from services.BookOrganizer.dataTransferObjects import BookPathDetails
-
+from os import getcwd
 
 class CurrentPath:
-    def backupBooks(self, pathDetails: BookPathDetails):
-        backupBookPath = self.createBackupBookPathName(pathDetails.fullPath)
-        workingDirectory = str(getenv('OLDPWD'))
-        BookDirector(workingDirectory).move(backupBookPath)
+    def execute(self, specifiedPath: str, destinationPath: str):
+        backupBookPath = self.createBackupBookPathName(destinationPath)
+        BookDirector(specifiedPath).move(backupBookPath)
 
-    def createBackupBookPathName(self, path):
+    def createBackupBookPathName(self, path: str):
         date = current().format("YYYY-MMM-DD")
         backupFileDirectory = f"{date}-BooksToBeStored"
         finalBackupPath = PurePath(path, backupFileDirectory).as_posix()
@@ -23,7 +20,7 @@ class CurrentPath:
 class MainPath:
     def __init__(
         self,
-        toBeOrganizedPath: BookPathDetails,
+        toBeOrganizedPath,
         exceptedFolders: list[str]
     ):
         self.toBeOrganizedPath = toBeOrganizedPath
@@ -64,20 +61,25 @@ class BookDirector:
             '*pdf',
         ]
 
-    def move(self, destinationFilePath: BookPathDetails | str):
+    def move(self, destinationFilePath):
         bookFiles = self.getBookFilesInDirectory()
+        print("")
+        print('[ SOURCE ]: ...')
+        print('[ INFO ] Book Files')
+        print(bookFiles)
         if isinstance(destinationFilePath, str):
             if bookFiles:
                 self.moveBookFilesToPath(
                     bookFiles,
                     destinationFilePath
                 )
-        if isinstance(destinationFilePath, BookPathDetails):
+        # if isinstance(destinationFilePath, BookPathDetails):
             if bookFiles:
-                self.moveBookFilesToPath(
-                    bookFiles,
-                    destinationFilePath.fullPath
-                )
+                # self.moveBookFilesToPath(
+                    # bookFiles,
+                    # destinationFilePath.fullPath
+                # )
+                pass
         else:
             pass
 
@@ -112,7 +114,7 @@ class BookDirector:
 
 
 class MainPathRegistry:
-    def __init__(self, bookPathDetails: BookPathDetails):
+    def __init__(self, bookPathDetails):
         self.bookPath = Path(
             bookPathDetails.mainBookPath
         )
