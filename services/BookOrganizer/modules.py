@@ -3,9 +3,7 @@ from core.utils import fetchDirectoriesInPath, getListOfLinesFromFile
 from pathlib import Path, PurePath
 from os import remove, getenv
 from pendulum import now as current
-
-from services.BookOrganizer.dataTransferObjects import BookPathDetails
-
+from os import getcwd
 
 class CurrentPath:
     def backupBooks(self, pathDetails: BookPathDetails):
@@ -112,7 +110,7 @@ class BookDirector:
 
 
 class MainPathRegistry:
-    def __init__(self, bookPathDetails: BookPathDetails):
+    def __init__(self, bookPathDetails):
         self.bookPath = Path(
             bookPathDetails.mainBookPath
         )
