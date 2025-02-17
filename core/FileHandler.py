@@ -21,10 +21,11 @@ class FileUtilsInterface(ABC):
 class FileSelector(FileUtilsInterface):
     def __init__(self, searchEntries: list[str]) -> None:
         self.searchEntries = searchEntries
-        fullTemporaryFilePath = Path(
-            currentDirectory()
-        ).joinpath('selectorEntries.txt')
-        self.temporaryFile = fullTemporaryFilePath
+        self.temporaryFile = self.createTemporaryFilePath()
+
+    @staticmethod
+    def createTemporaryFilePath():
+        return Path(currentDirectory()).joinpath('selectorEntries.txt')
 
     def execute(self) -> None:
         try:
