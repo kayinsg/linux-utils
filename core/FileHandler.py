@@ -163,25 +163,41 @@ class FileMover(FileUtilsInterface):
         self.destinationDirectory = path.expanduser(destinationDirectory)
 
     def execute(self) -> None:
-        files       = self.files
-        directory   = self.destinationDirectory
-        if files:
-            cleanedDirectory = self.ensureDirectoryExists(directory)
-            returnValue = self.moveFiles(files, cleanedDirectory)
-            self.displayCompletionToUser(returnValue)
+        if self.files:
+            self.moveFiles()
         else:
             print('[ ERROR ] There Are No Files To Move')
 
-    def ensureDirectoryExists(self, directory: str):
+
+    def moveFiles(self):
         try:
-            checkDirectoryCommand = [
-                'test', '-d', f'{directory}'
-            ]
-            directoryExists = subprocess.run(
-                checkDirectoryCommand,
-                capture_output=True,
-                text=True,
-                check=True
+            DirectoryStockClerk(self.destinationDirectory).ensureDirectoryExists()
+            self.moveFilesToDestinationPath(self.files)
+            print(
+                '[ INFO ] All Files Have Been '
+                'Successfully Moved To "{}"'
+                .format(self.destinationDirectory)
+            )
+        except OSError:
+            print(
+                "[ ERROR ] "
+                "Moving The Files Ultimately Turned Out To Be Unsuccessful"
+            )
+
+    def moveFilesToDestinationPath(self, files: list[str]):
+        for file in files:
+            try:
+                move(file, self.destinationDirectory)
+                print(
+                    "[→] {} \nTRANSFERRED SUCCESSFULLY"
+                    .format(file)
+                )
+            except (OSError, subprocess.CalledProcessError) as error:
+                print("")
+                print(f"[ SYSTEM ERROR ] {error}")
+                raise OSError(error)
+
+
 class DirectoryStockClerk:
     def __init__(self, directory: str):
         self.directory = directory
@@ -220,39 +236,6 @@ class DirectoryStockClerk:
             print('    Here Is The More Detailed Error Code:')
             print(f'        {error}')
             system.exit(1)
-
-    def moveFiles(self, files: list[str], directory: str):
-        for file in files:
-            try:
-                move(file, directory)
-                print(
-                    "[→] {} \nTRANSFERRED SUCCESSFULLY"
-                    .format(file)
-                )
-                print("")
-                fileIsTheLastOneBeingMoved = file == files[-1]
-                if fileIsTheLastOneBeingMoved:
-                    return True
-            except (OSError, subprocess.CalledProcessError) as error:
-                print("")
-                print(f"[ SYSTEM ERROR ] {error}")
-                return False
-
-    def displayCompletionToUser(self, completionProcess: bool):
-        print("")
-        destinationDirectory = self.destinationDirectory
-        if completionProcess:
-            print(
-                '[ INFO ] All Files Have Been '
-                'Successfully Moved To "{}"'
-                .format(destinationDirectory)
-            )
-            copyPathToClipboard(destinationDirectory)
-        else:
-            print(
-                "[ ERROR ] "
-                "Moving The Files Ultimately Turned Out To Be Unsuccessful"
-            )
 
 
 class FileDeleter(FileUtilsInterface):
