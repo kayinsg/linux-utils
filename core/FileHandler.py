@@ -151,10 +151,12 @@ class FileDecompressor(FileUtilsInterface):
 
 
 class FileMover(FileUtilsInterface):
-    def __init__(self,
-                 recipientDirectory,
-                 files                  : list,
-                 destinationDirectory   : str):
+    def __init__(
+        self,
+        recipientDirectory,
+        files                  : list,
+        destinationDirectory   : str,
+    ):
 
         self.recipientDirectory   = recipientDirectory
         self.files                = files
