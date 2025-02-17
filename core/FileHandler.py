@@ -182,26 +182,35 @@ class FileMover(FileUtilsInterface):
                 capture_output=True,
                 text=True,
                 check=True
+class DirectoryStockClerk:
+    def __init__(self, directory: str):
+        self.directory = directory
+
+    def ensureDirectoryExists(self):
+        if self._directoryExists():
+            print("")
+            print(f'[ SYSTEM INFO ] "{self.directory}" Exists')
+        else:
+            self._createDirectory()
+            print(f"[ SYSTEM INFO ] CREATED FOLDER {self.directory}")
+
+    def _directoryExists(self):
+        checkDirectoryCommand = [
+            'test', '-d', f'{self.directory}'
+        ]
+        directoryExists = subprocess.run(
+            checkDirectoryCommand,
+            capture_output=True,
+            text=True,
+            check=True
             ).returncode == 0
+        if directoryExists:
+            return True
+        return False
 
-            if directoryExists:
-                print("")
-                print(f'[ SYSTEM INFO ] "{directory}" Exists')
-                print('[ INFO ] Proceeding To Move Files.')
-            else:
-                self._createDirectory(directory)
-                print(f"[ SYSTEM INFO ] CREATED FOLDER {directory}")
-            return directory
-
-        # except subprocess.CalledProcessError as error:
-        except subprocess.CalledProcessError:
-            # print(f'[ SYSTEM ERROR ] {error}')
-            self._createDirectory(directory)
-            print(f"[ SYSTEM INFO ] CREATED FOLDER {directory}")
-
-    def _createDirectory(self, directory: str):
+    def _createDirectory(self):
         try:
-            subprocess.run(['mkdir', directory],
+            subprocess.run(['mkdir', self.directory],
                            text  = True,
                            check = True)
 
