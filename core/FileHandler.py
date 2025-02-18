@@ -28,25 +28,28 @@ class FileSelector(FileUtilsInterface):
         return Path(currentDirectory()).joinpath('selectorEntries.txt')
 
     def execute(self) -> None:
-        try:
-            if self.searchEntries:
-                self.writeLinesToTemporaryFile()
-                filePath = self.letUserSelectFilePath()
-                if filePath:
-                    copyPathToClipboard(filePath)
-                else:
-                    print(
-                        '[ INFO ] None Of The File Paths Have Been Copied To The Clipboard'
-                    )
-                remove(self.temporaryFile)
-            else:
-                print(
-                    "[ ERROR ] "
-                    "There Were No Results To Select "
-                    "Through FZF From Your RipGrep Search."
-                )
-        except (TypeError, UnboundLocalError):
-            print('[ ERROR ] Failed To Select File Path')
+        searchEntriesFound = self.searchEntries is not None
+        if searchEntriesFound:
+            self.selectFromSearchEntries()
+            remove(self.temporaryFile)
+        else:
+            self.notifyUserOfFailure()
+
+    def selectFromSearchEntries(self):
+        filePath = FZFMenu(self.searchEntries, self.temporaryFile).getPathFromUser()
+        if filePath:
+            copyPathToClipboard(filePath)
+        else:
+            print(
+                '[ INFO ] None Of The File Paths Have Been Copied To The Clipboard'
+            )
+
+    def notifyUserOfFailure(self):
+            print(
+                "[ ERROR ] "
+                "There Were No Results To Select "
+                "Through FZF From Your RipGrep Search."
+            )
 
 class FZFMenu:
     def __init__(self, searchEntries, temporaryFile):
