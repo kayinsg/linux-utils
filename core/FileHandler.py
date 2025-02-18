@@ -48,24 +48,37 @@ class FileSelector(FileUtilsInterface):
         except (TypeError, UnboundLocalError):
             print('[ ERROR ] Failed To Select File Path')
 
+class FZFMenu:
+    def __init__(self, searchEntries, temporaryFile):
+        self.searchEntries = searchEntries
+        self.temporaryFile = temporaryFile
+
+    def getPathFromUser(self):
+        self.writeLinesToTemporaryFile()
+        filePath = self.letUserSelectFilePath()
+        return filePath
+
     def writeLinesToTemporaryFile(self):
         with open(self.temporaryFile, 'w') as file:
             for searchEntry in self.searchEntries:
                 file.writelines(f"{searchEntry}\n")
 
     def letUserSelectFilePath(self):
-        readFile = ['cat', self.temporaryFile]
-        filePaths = subprocess.run(
-            readFile, stdout=subprocess.PIPE, text=True
-        ).stdout
+        try:
+            readFile = ['cat', self.temporaryFile]
+            filePaths = subprocess.run(
+                readFile, stdout=subprocess.PIPE, text=True
+            ).stdout
 
-        openPathInFZF = ['fzf']
-        userSelectedFilePath = subprocess.run(
-            openPathInFZF, input=filePaths, text=True,
-            capture_output=True
-        ).stdout
+            openPathInFZF = ['fzf']
+            userSelectedFilePath = subprocess.run(
+                openPathInFZF, input=filePaths, text=True,
+                capture_output=True
+            ).stdout
 
-        return userSelectedFilePath
+            return userSelectedFilePath
+        except (TypeError, UnboundLocalError):
+            print('[ ERROR ] Failed To Select File Path')
 
 
 class FileDecompressor(FileUtilsInterface):
