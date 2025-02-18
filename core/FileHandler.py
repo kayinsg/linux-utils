@@ -177,7 +177,6 @@ class DirectoryStockClerk:
             checkDirectoryCommand,
             capture_output=True,
             text=True,
-            check=True
             ).returncode == 0
         if directoryExists:
             return True

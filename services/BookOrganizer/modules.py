@@ -68,13 +68,11 @@ class StandardBookMover:
         )
 
     def moveBooks(self, standardBooks: list[str], standardBooksDestinationPath):
-        for book in standardBooks:
-            pass
-            FileMover(
-                recipientDirectory   = self.workingDirectory,
-                files                = list(book),
-                destinationDirectory = standardBooksDestinationPath
-            ).execute()
+        FileMover(
+            recipientDirectory   = self.workingDirectory,
+            files                = standardBooks,
+            destinationDirectory = standardBooksDestinationPath
+        ).execute()
 
 
 class PDFMover:
@@ -135,21 +133,18 @@ class PDFTransporter:
         self.moveToBooksDirectory(self.PDFfiles['Books'])
 
     def moveToDocumentsDirectory(self, PDFDocuments: list[str]):
-        for document in PDFDocuments:
-            FileMover(
-                self.path['workingDirectory'],
-                list(document),
-                self.path['Documents']
-            )
+        FileMover(
+            self.path['workingDirectory'],
+            PDFDocuments,
+            self.path['Documents']
+        ).execute()
 
     def moveToBooksDirectory(self, PDFBooks: list[str]):
-        for book in PDFBooks:
-            pass
-            FileMover(
-                self.path['workingDirectory'],
-                list(book),
-                self.path['Books']
-            )
+        FileMover(
+            self.path['workingDirectory'],
+            PDFBooks,
+            self.path['Books']
+        ).execute()
 
 class MainPathRegistry:
     def __init__(self, bookPathDetails):
