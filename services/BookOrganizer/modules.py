@@ -1,3 +1,4 @@
+
 from core.utils import fetchDirectoriesInPath, getListOfLinesFromFile
 import subprocess
 from core.FileHandler import FileMover
@@ -6,6 +7,7 @@ import pathlib
 from pathlib import Path
 from core.FileHandler import FileMover
 from services.BookOrganizer.pathNames import workingDirectory, StandardBooksPath, PDFPaths
+import os
 
 class Mover:
     def __init__(self, workingDirectory, standardBooksPath,PDFPaths):
@@ -189,4 +191,42 @@ class MainPathRegistry:
     def getListOfPathsFromRegistry(self, tempFile):
         return getListOfLinesFromFile(tempFile)
 
-Mover(workingDirectory, StandardBooksPath, PDFPaths).move()
+class FZFMenu:
+    def __init__(self, searchEntries):
+        self.searchEntries = searchEntries
+        self.temporaryFile = self.createTemporaryFilePath()
+
+    @staticmethod
+    def createTemporaryFilePath():
+        currentDirectory = os.getcwd()
+        return Path(
+            os.path.join(currentDirectory, 'selectorEntries.txt')
+        )
+
+    def getPathFromUser(self):
+        self.writeLinesToTemporaryFile()
+        filePath = self.letUserSelectFilePath()
+        os.remove(self.temporaryFile)
+        return filePath.strip()
+
+    def writeLinesToTemporaryFile(self):
+        with open(self.temporaryFile, 'a') as file:
+            for searchEntry in self.searchEntries:
+                file.writelines(f"{searchEntry}\n")
+
+    def letUserSelectFilePath(self):
+        try:
+            readFile = ['cat', self.temporaryFile]
+            filePaths = subprocess.run(
+                readFile, stdout=subprocess.PIPE, text=True
+            ).stdout
+
+            openPathInFZF = ['fzf']
+            userSelectedFilePath = subprocess.run(
+                openPathInFZF, input=filePaths, text=True,
+                capture_output=True
+            ).stdout
+
+            return userSelectedFilePath
+        except (TypeError, UnboundLocalError):
+            print('[ ERROR ] Failed To Select File Path')
