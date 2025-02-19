@@ -191,6 +191,48 @@ class MainPathRegistry:
     def getListOfPathsFromRegistry(self, tempFile):
         return getListOfLinesFromFile(tempFile)
 
+
+class RegistryPopulator:
+    def __init__(self, bookPath, fileContainingPersistentBookPaths):
+        self.bookPath = bookPath
+        self.fileContainingPersistentBookPaths = fileContainingPersistentBookPaths
+
+    def get(self):
+        folders = self.getListOfFolders(self.bookPath)
+        pathsChosenByUser = self.allowUserToSelectFolders(folders)
+        self.storePathsInFile(pathsChosenByUser, self.fileContainingPersistentBookPaths)
+        return pathsChosenByUser
+
+
+    def getListOfFolders(self, path):
+        itemsInPath = Path(path).iterdir()
+        foldersInPath = list(filter(lambda item: item.is_dir(), itemsInPath))
+        return list(
+            map(
+                lambda folder: str(folder),
+                foldersInPath
+            )
+        )
+
+    def allowUserToSelectFolders(self, foldersInBookPath):
+        numberOfSelectedEntries = 0
+        foldersChosenByUser = list()
+
+        while numberOfSelectedEntries < 3:
+            print(numberOfSelectedEntries)
+            chosenEntry = self.allowUserToSelectFolderFromFZF(foldersInBookPath)
+            foldersChosenByUser.append(chosenEntry)
+            numberOfSelectedEntries+=1
+        return foldersChosenByUser
+
+    def allowUserToSelectFolderFromFZF(self, foldersInBookPath):
+        return FZFMenu(foldersInBookPath).getPathFromUser()
+
+    def storePathsInFile(self, paths, file):
+        with open(file, 'w') as bookRegistry:
+            for folder in paths:
+                bookRegistry.writelines(f'{folder}\n')
+
 class FZFMenu:
     def __init__(self, searchEntries):
         self.searchEntries = searchEntries
