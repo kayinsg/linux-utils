@@ -161,35 +161,22 @@ class MainPathRegistry:
         self.fileContainingPersistentBookPaths = self.createBookRegistryFile()
 
     def retrieve(self) -> list[str]:
-        bookRegistryAlreadyExits = self.bookTemp.exists()
+        bookRegistryAlreadyExits = self.fileContainingPersistentBookPaths.exists()
         if bookRegistryAlreadyExits:
-            print(f'[ INFO ] "{self.bookTemp}" already exists')
-            print('Proceeding With Program')
+            self.notifyUserOfExistingDirectory()
         else:
-            foldersInPath = fetchDirectoriesInPath(self.bookPath)
-            userMainFolders = self.getMainFoldersFromUser(foldersInPath)
-            self.storeMainFoldersInFile(userMainFolders, self.bookTemp)
+            return self.populateBookRegistry()
+        return ['Main Folders Chosen By User']
 
-        return self.getListOfPathsFromRegistry(self.bookTemp)
+    def notifyUserOfExistingDirectory(self):
+        print(f'[ INFO ] "{self.fileContainingPersistentBookPaths}" already exists')
+        print('Proceeding With Program')
 
-    def getMainFoldersFromUser(self, foldersInPath: list):
-        mainFolders: list = list()
-        fileSelector = FileSelector(foldersInPath)
-        fileSelector.writeLinesToTemporaryFile()
-        while len(mainFolders) < 3:
-            mainChosenByUser = fileSelector.letUserSelectFilePath()
-            mainChosenByUser = mainChosenByUser.strip()
-            mainFolders.append(mainChosenByUser)
-        remove(fileSelector.temporaryFile)
-        return mainFolders
-
-    def storeMainFoldersInFile(self, mainFolders, bookTemp):
-        with open(bookTemp, 'w') as mainFolderRegistryFile:
-            for folder in mainFolders:
-                mainFolderRegistryFile.writelines(f'{folder}\n')
-
-    def getListOfPathsFromRegistry(self, tempFile):
-        return getListOfLinesFromFile(tempFile)
+    def populateBookRegistry(self):
+        return RegistryPopulator(
+            self.bookPath,
+            self.fileContainingPersistentBookPaths
+        ).get()
 
 
 class RegistryPopulator:
