@@ -1,5 +1,6 @@
 from core.utils import fetchDirectoriesInPath, getListOfLinesFromFile
-from core.FileHandler import FileMover, FileSelector
+import subprocess
+from core.FileHandler import FileMover
 from core.utils import fetchDirectoriesInPath, getListOfLinesFromFile
 import pathlib
 from pathlib import Path
