@@ -148,13 +148,15 @@ class PDFTransporter:
         ).execute()
 
 class MainPathRegistry:
-    def __init__(self, bookPathDetails):
-        self.bookPath = Path(
-            bookPathDetails.mainBookPath
-        )
-        self.bookTemp = Path(
-            self.bookPath / "folderRegistry.txt"
-        )
+
+    @staticmethod
+    def createBookRegistryFile():
+        home = Path.home().as_posix()
+        return Path(os.path.join(home, "Desktop", "bookPathRegistry"))
+
+    def __init__(self, bookPath):
+        self.bookPath = bookPath
+        self.fileContainingPersistentBookPaths = self.createBookRegistryFile()
 
     def retrieve(self) -> list[str]:
         bookRegistryAlreadyExits = self.bookTemp.exists()
