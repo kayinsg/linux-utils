@@ -133,6 +133,7 @@ class FileMover(FileUtilsInterface):
             DirectoryStockClerk(self.destinationDirectory).ensureDirectoryExists()
             self.moveFilesToDestinationPath(self.files)
             print(
+                '\n'
                 '[ INFO ] All Files Have Been '
                 'Successfully Moved To "{}"'
                 .format(self.destinationDirectory)
@@ -148,7 +149,7 @@ class FileMover(FileUtilsInterface):
             try:
                 move(file, self.destinationDirectory)
                 print(
-                    "[→] {} \nTRANSFERRED SUCCESSFULLY"
+                    "[→] {} \nTRANSFERRED SUCCESSFULLY\n"
                     .format(file)
                 )
             except (OSError, subprocess.CalledProcessError) as error:
