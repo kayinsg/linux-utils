@@ -81,9 +81,7 @@ class FZFMenu:
     @staticmethod
     def createTemporaryFilePath() -> str:
         currentDirectory = os.getcwd()
-        return Path(
-            os.path.join(currentDirectory, 'selectorEntries.txt')
-        )
+        return os.path.join(currentDirectory, 'selectorEntries.txt')
 
     def getPathFromUser(self) -> str:
         self.writeLinesToTemporaryFile()
