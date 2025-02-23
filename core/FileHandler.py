@@ -36,13 +36,16 @@ class FileSelector(FileUtilsInterface):
             self.notifyUserOfFailure()
 
     def selectFromSearchEntries(self):
-        filePath = FZFMenu(self.searchEntries, self.temporaryFile).getPathFromUser()
+        filePath = self.getUserChosenPath()
         if filePath:
             copyPathToClipboard(filePath)
         else:
             print(
                 '[ INFO ] None Of The File Paths Have Been Copied To The Clipboard'
             )
+
+    def getUserChosenPath(self):
+        return FZFMenu(self.searchEntries, self.temporaryFile).getPathFromUser()
 
     def notifyUserOfFailure(self):
             print(
