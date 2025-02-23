@@ -123,20 +123,20 @@ class FileMover(FileUtilsInterface):
 
     def execute(self) -> None:
         if self.files:
-            self.moveFiles()
+            self.moveFiles(self.files, self.destinationDirectory)
         else:
             print('[ ERROR ] There Are No Files To Move')
 
 
-    def moveFiles(self):
+    def moveFiles(self, files, destinationDirectory):
         try:
-            DirectoryStockClerk(self.destinationDirectory).ensureDirectoryExists()
-            self.moveFilesToDestinationPath(self.files)
+            DirectoryStockClerk(destinationDirectory).ensureDirectoryExists()
+            self.moveFilesToDestinationPath(files, destinationDirectory)
             print(
                 '\n'
                 '[ INFO ] All Files Have Been '
                 'Successfully Moved To "{}"'
-                .format(self.destinationDirectory)
+                .format(destinationDirectory)
             )
         except OSError:
             print(
@@ -144,10 +144,10 @@ class FileMover(FileUtilsInterface):
                 "Moving The Files Ultimately Turned Out To Be Unsuccessful"
             )
 
-    def moveFilesToDestinationPath(self, files: list[str]):
+    def moveFilesToDestinationPath(self, files: list[str], destinationPath):
         for file in files:
             try:
-                move(file, self.destinationDirectory)
+                move(file, destinationPath)
                 print(
                     "[→] {} \nTRANSFERRED SUCCESSFULLY\n"
                     .format(file)
