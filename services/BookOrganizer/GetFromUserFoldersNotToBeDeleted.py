@@ -79,24 +79,24 @@ class FZFMenu:
         self.temporaryFile = self.createTemporaryFilePath()
 
     @staticmethod
-    def createTemporaryFilePath():
+    def createTemporaryFilePath() -> str:
         currentDirectory = os.getcwd()
         return Path(
             os.path.join(currentDirectory, 'selectorEntries.txt')
         )
 
-    def getPathFromUser(self):
+    def getPathFromUser(self) -> str:
         self.writeLinesToTemporaryFile()
         filePath = self.letUserSelectFilePath()
         os.remove(self.temporaryFile)
         return filePath.strip()
 
-    def writeLinesToTemporaryFile(self):
+    def writeLinesToTemporaryFile(self) -> None:
         with open(self.temporaryFile, 'a') as file:
             for searchEntry in self.searchEntries:
                 file.writelines(f"{searchEntry}\n")
 
-    def letUserSelectFilePath(self):
+    def letUserSelectFilePath(self) -> str:
         try:
             readFile = ['cat', self.temporaryFile]
             filePaths = subprocess.run(
@@ -112,3 +112,4 @@ class FZFMenu:
             return userSelectedFilePath
         except (TypeError, UnboundLocalError):
             print('[ ERROR ] Failed To Select File Path')
+            return "Failure"
