@@ -33,27 +33,18 @@ class FileFinder(FinderInterface):
             )
 
     def locateAllFiles(self):
-        locateAllFilesCommand = []
-        if self.path == Path.home():
-            locateAllFilesCommand = [
-                'rg',
-                '--files',
-                f'{self.path}'
-            ]
-        else:
-            locateAllFilesCommand = [
-                'rg',
-                '--files',
-                '--hidden',
-                f'{self.path}'
-            ]
         filesWithinDirectory = subprocess.run(
-            locateAllFilesCommand,
+            self.determineSpecificLocateFilesCommand(),
             text=True,
             check=True,
             stdout=subprocess.PIPE
         ).stdout
         return filesWithinDirectory
+
+    def determineSpecificLocateFilesCommand(self):
+        if self.path == Path.home():
+            return [ 'rg', '--files', f'{self.path}' ]
+        return [ 'rg', '--files', '--hidden', f'{self.path}']
 
     def locateFilesMatchingPattern(self, filesInDirectory):
         findPattern = ['rg', f'{self.pattern}']
