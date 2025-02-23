@@ -17,13 +17,39 @@ class FileFinder(FinderInterface):
     def __init__(self, pattern, path):
         self.pattern       = pattern
         self.path          = path
+        self.ripgrepCommand = self.determineSpecificLocateFilesCommand()
+
+    def determineSpecificLocateFilesCommand(self):
+        if self.path == Path.home():
+            return [ 'rg', '--files', f'{self.path}' ]
+        return [ 'rg', '--files', '--hidden', f'{self.path}']
 
     def find(self):
+        filesInDirectory = self.locateAllFiles()
+        filesMatchingPattern = self.locateFilesMatchingPattern(
+            filesInDirectory,
+            self.pattern
+        )
+        return filesMatchingPattern
+
+    def locateAllFiles(self):
+        filesWithinDirectory = subprocess.run(
+            self.ripgrepCommand,
+            text=True,
+            check=True,
+            stdout=subprocess.PIPE
+        ).stdout
+        return filesWithinDirectory
+
+    def locateFilesMatchingPattern(self, filesInDirectory, pattern):
         try:
-            filesInPath = self.locateAllFiles()
-            filesMatchingPattern = self.locateFilesMatchingPattern(
-                filesInPath
-            )
+            filesMatchingPattern = subprocess.run(
+                ['rg', f'{pattern}'],
+                input=filesInDirectory,
+                text=True,
+                check=True,
+                capture_output=True,
+            ).stdout.splitlines()
             return filesMatchingPattern
         except subprocess.CalledProcessError:
             print(
@@ -31,32 +57,6 @@ class FileFinder(FinderInterface):
                 'RipGrep was unable to find files matching '
                 f'\"{self.pattern}\"'
             )
-
-    def locateAllFiles(self):
-        filesWithinDirectory = subprocess.run(
-            self.determineSpecificLocateFilesCommand(),
-            text=True,
-            check=True,
-            stdout=subprocess.PIPE
-        ).stdout
-        return filesWithinDirectory
-
-    def determineSpecificLocateFilesCommand(self):
-        if self.path == Path.home():
-            return [ 'rg', '--files', f'{self.path}' ]
-        return [ 'rg', '--files', '--hidden', f'{self.path}']
-
-    def locateFilesMatchingPattern(self, filesInDirectory):
-        findPattern = ['rg', f'{self.pattern}']
-
-        filesMatchingPattern = subprocess.run(
-            findPattern,
-            input=filesInDirectory,
-            text=True,
-            check=True,
-            capture_output=True,
-        )
-        return filesMatchingPattern.stdout.splitlines()
 
 
 # class DirectoryFinder(FinderInterface):
