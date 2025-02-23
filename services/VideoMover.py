@@ -25,18 +25,12 @@ class VideoMover:
         self.recipientDirectory = recipientDirectory
 
     def move(self, destinationPath):
-        path = self.recipientDirectory
-        videoFiles = self.findVideoFilesInDirectory(path)
-
+        videoFiles = self.getVideoFilesInDirectory(self.recipientDirectory)
         self.moveVideoFilesToPath(videoFiles, destinationPath)
 
-    def findVideoFilesInDirectory(self, path: str):
-        workingDirectory = Path(path)
-        videoFilesInDirectory = list()
-        for videoFile in workingDirectory.glob('*.mp4'):
-            videoFilesInDirectory.append(videoFile)
-
-        return videoFilesInDirectory
+    def getVideoFilesInDirectory(self, directory: str):
+        videoFilesInDirectory = Path(directory).glob('*.mp4')
+        return map(lambda videoFile: videoFile.as_posix(), videoFilesInDirectory)
 
     def moveVideoFilesToPath(self, files, destinationDirectory):
         try:
