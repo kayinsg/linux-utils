@@ -112,9 +112,9 @@ class FileDecompressor(FileUtilsInterface):
 class FileMover(FileUtilsInterface):
     def __init__(
         self,
-        recipientDirectory,
-        files                  : list,
-        destinationDirectory   : str,
+        recipientDirectory   : str,
+        files                : list,
+        destinationDirectory : str,
     ):
 
         self.recipientDirectory   = recipientDirectory
@@ -128,7 +128,11 @@ class FileMover(FileUtilsInterface):
             print('[ ERROR ] There Are No Files To Move')
 
 
-    def moveFiles(self, files, destinationDirectory):
+    def moveFiles(
+        self,
+        files: list[str],
+        destinationDirectory: str,
+    ) -> None:
         try:
             DirectoryStockClerk(destinationDirectory).ensureDirectoryExists()
             self.moveFilesToDestinationPath(files, destinationDirectory)
@@ -144,7 +148,11 @@ class FileMover(FileUtilsInterface):
                 "Moving The Files Ultimately Turned Out To Be Unsuccessful"
             )
 
-    def moveFilesToDestinationPath(self, files: list[str], destinationPath):
+    def moveFilesToDestinationPath(
+        self,
+        files: list[str],
+        destinationPath: str,
+    ) -> None:
         for file in files:
             try:
                 move(file, destinationPath)
