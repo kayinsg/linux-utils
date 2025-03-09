@@ -166,7 +166,6 @@ class FileMover(FileUtilsInterface):
             except (OSError, subprocess.CalledProcessError) as error:
                 print("")
                 print(f"[ SYSTEM ERROR ] {error}")
-                raise OSError(error)
 
 
 class DirectoryStockClerk:
