@@ -1,5 +1,5 @@
 import unittest
-from CodeLineCounter import FileGrouper, LineCounter
+from CodeLineCounter import FileGrouper, FileSLOCHashTable
 from colour_runner.runner import ColourTextTestRunner
 
 
@@ -24,7 +24,7 @@ class SourceCodeRetrievalTest(unittest.TestCase):
 
     def testShouldGetSLOCForeachFile(self):
 
-        class FakeLineCounter(LineCounter):
+        class FakeLineCounter(FileSLOCHashTable):
             def __init__(self, listOfFiles):
                 self.listOfFiles = listOfFiles
 
