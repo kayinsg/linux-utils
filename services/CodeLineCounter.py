@@ -12,8 +12,10 @@ class FileGrouper:
         return os.listdir(self.directory)
 
     def getSimilarFilesInPath(self, files, extension):
-        result = [ ]
-        for file in files:
-            if file.endswith('.' + extension):
-                result.append(file)
-        return result
+        fileMatchesExtension = lambda file: self.fileMatchesExtension(file, extension)
+        return list(filter(fileMatchesExtension, files))
+
+    def fileMatchesExtension(self, file, extension):
+        if file.endswith('.' + extension):
+            return True
+        return False
