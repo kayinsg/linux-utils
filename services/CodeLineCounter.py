@@ -27,13 +27,11 @@ class LineCounter:
         self.listOfFiles = listOfFiles
 
     def getNumber(self):
-        filesWithNumberOfLines = [ ]
-        for file in self.listOfFiles:
-            numberOfLinesInFile = self.getlineCount(file)
-            fileHash = {file: numberOfLinesInFile}
-            filesWithNumberOfLines.append(fileHash)
-        return filesWithNumberOfLines
+        return list(map(self.aggregateFileWithSLOC, self.listOfFiles))
 
+    def aggregateFileWithSLOC(self, file):
+        numberOfLinesInFile = self.getlineCount(file)
+        return {file: numberOfLinesInFile}
 
     def getlineCount(self, file):
         return subprocess.run(
