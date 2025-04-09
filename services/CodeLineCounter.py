@@ -43,10 +43,14 @@ class LineCounter:
         return {file: numberOfLinesInFile}
 
     def getTotalForLineNumbers(self, fileWithLineLength):
+        total = self.summateTotalLineNumbers(fileWithLineLength)
+        fileWithLineLength.append({'TOTAL': total})
+
+        return fileWithLineLength
+
+    def summateTotalLineNumbers(self, fileWithLineLength):
         total = 0
         for item in fileWithLineLength:
             for value in item.values():
                 total += value
-        output = fileWithLineLength.copy()
-        output.append({'TOTAL': total})
-        return output
+        return total
