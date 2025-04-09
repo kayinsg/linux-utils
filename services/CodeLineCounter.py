@@ -35,34 +35,34 @@ class LineCounter:
         ).stdout.strip()
 
     def getNumber(self):
-        fileWithLineLength = list(map(self.aggregateFileWithSLOC, self.listOfFiles))
-        return self.getFileSLOCHashTableWithTotals(fileWithLineLength)
+        fileSLOCHashTableWithoutTotals = list(map(self.aggregateFileWithSLOC, self.listOfFiles))
+        return self.getFileSLOCHashTableWithTotals(fileSLOCHashTableWithoutTotals)
 
     def aggregateFileWithSLOC(self, file):
         numberOfLinesInFile = self.getlineCount(file)
         return {file: numberOfLinesInFile}
 
-    def getFileSLOCHashTableWithTotals(self, fileSLOCHashTable):
-        return FileSLOCHashTable(fileSLOCHashTable).finalizeTable()
+    def getFileSLOCHashTableWithTotals(self, fileSLOCHashTableWithoutTotals):
+        return FileSLOCHashTable(fileSLOCHashTableWithoutTotals).finalizeTable()
 
 
 class FileSLOCHashTable:
-    def __init__(self, fileWithLineLength):
-        self.fileWithLineLength = fileWithLineLength
+    def __init__(self, fileSLOCHashTableWithoutTotals):
+        self.fileSLOCHashTableWithoutTotals = fileSLOCHashTableWithoutTotals
 
     def finalizeTable(self):
-        total = self.summateTotalLineNumbersForAllFileSLOC(self.fileWithLineLength)
-        return self.getFinalHashTableForFileSLOC(self.fileWithLineLength, total)
+        total = self.summateTotalLineNumbersForAllFileSLOC(self.fileSLOCHashTableWithoutTotals)
+        return self.getFinalHashTableForFileSLOC(self.fileSLOCHashTableWithoutTotals, total)
 
-    def getFinalHashTableForFileSLOC(self, fileWithLineLength, total):
-        total = self.summateTotalLineNumbersForAllFileSLOC(fileWithLineLength)
-        fileWithLineLength.append({'TOTAL': total})
+    def getFinalHashTableForFileSLOC(self, fileSLOCHashTableWithoutTotals, total):
+        total = self.summateTotalLineNumbersForAllFileSLOC(fileSLOCHashTableWithoutTotals)
+        fileSLOCHashTableWithoutTotals.append({'TOTAL': total})
 
-        return fileWithLineLength
+        return fileSLOCHashTableWithoutTotals
 
-    def summateTotalLineNumbersForAllFileSLOC(self, fileWithLineLength):
+    def summateTotalLineNumbersForAllFileSLOC(self, fileSLOCHashTableWithoutTotals):
         total = 0
-        for item in fileWithLineLength:
+        for item in fileSLOCHashTableWithoutTotals:
             for value in item.values():
                 total += value
         return total
