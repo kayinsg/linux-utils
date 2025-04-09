@@ -66,7 +66,8 @@ class FileSLOCHashTableWithTotals:
 
     def finalizeTable(self):
         total = self.sumFileLineNumbers()
-        return self.getFinalHashTableForFileSLOC(total)
+        self.addTotalLineNumbersToHashTable(total)
+        return self.fileSLOCHashTableWithoutTotals
 
     def sumFileLineNumbers(self):
         total = 0
@@ -75,6 +76,5 @@ class FileSLOCHashTableWithTotals:
                 total += value
         return total
 
-    def getFinalHashTableForFileSLOC(self, total):
+    def addTotalLineNumbersToHashTable(self, total):
         self.fileSLOCHashTableWithoutTotals.append({'TOTAL': total})
-        return self.fileSLOCHashTableWithoutTotals
