@@ -35,18 +35,18 @@ class LineCounter:
         ).stdout.strip()
 
     def getNumber(self):
-        rawHash = list(map(self.aggregateFileWithSLOC, self.listOfFiles))
-        return self.getTotalForLineNumbers(rawHash)
+        fileWithLineLength = list(map(self.aggregateFileWithSLOC, self.listOfFiles))
+        return self.getTotalForLineNumbers(fileWithLineLength)
 
     def aggregateFileWithSLOC(self, file):
         numberOfLinesInFile = self.getlineCount(file)
         return {file: numberOfLinesInFile}
 
-    def getTotalForLineNumbers(self, inputData):
+    def getTotalForLineNumbers(self, fileWithLineLength):
         total = 0
-        for item in inputData:
+        for item in fileWithLineLength:
             for value in item.values():
                 total += value
-        output = inputData.copy()
+        output = fileWithLineLength.copy()
         output.append({'TOTAL': total})
         return output
