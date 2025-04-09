@@ -36,19 +36,31 @@ class LineCounter:
 
     def getNumber(self):
         fileWithLineLength = list(map(self.aggregateFileWithSLOC, self.listOfFiles))
-        return self.getTotalForLineNumbers(fileWithLineLength)
+        return self.getFileSLOCHashTableWithTotals(fileWithLineLength)
 
     def aggregateFileWithSLOC(self, file):
         numberOfLinesInFile = self.getlineCount(file)
         return {file: numberOfLinesInFile}
 
-    def getTotalForLineNumbers(self, fileWithLineLength):
-        total = self.summateTotalLineNumbers(fileWithLineLength)
+    def getFileSLOCHashTableWithTotals(self, fileSLOCHashTable):
+        return FileSLOCHashTable(fileSLOCHashTable).finalizeTable()
+
+
+class FileSLOCHashTable:
+    def __init__(self, fileWithLineLength):
+        self.fileWithLineLength = fileWithLineLength
+
+    def finalizeTable(self):
+        total = self.summateTotalLineNumbersForAllFileSLOC(self.fileWithLineLength)
+        return self.getFinalHashTableForFileSLOC(self.fileWithLineLength, total)
+
+    def getFinalHashTableForFileSLOC(self, fileWithLineLength, total):
+        total = self.summateTotalLineNumbersForAllFileSLOC(fileWithLineLength)
         fileWithLineLength.append({'TOTAL': total})
 
         return fileWithLineLength
 
-    def summateTotalLineNumbers(self, fileWithLineLength):
+    def summateTotalLineNumbersForAllFileSLOC(self, fileWithLineLength):
         total = 0
         for item in fileWithLineLength:
             for value in item.values():
