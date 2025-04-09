@@ -50,10 +50,10 @@ class FileSLOCHashTable:
         self.fileSLOCHashTableWithoutTotals = fileSLOCHashTableWithoutTotals
 
     def finalizeTable(self):
-        total = self.summateTotalLineNumbersForAllFileSLOC()
+        total = self.sumFileLineNumbers()
         return self.getFinalHashTableForFileSLOC(total)
 
-    def summateTotalLineNumbersForAllFileSLOC(self):
+    def sumFileLineNumbers(self):
         total = 0
         for item in self.fileSLOCHashTableWithoutTotals:
             for value in item.values():
