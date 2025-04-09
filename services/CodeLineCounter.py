@@ -1,5 +1,27 @@
 import os
 import subprocess
+import tabulate
+
+
+class SLOCTabulator:
+    def __init__(self, fileExtension):
+        self.fileExtension = fileExtension
+
+    def tabulateData(self):
+        fileDetails = self.getHashTableContainingFileDetails()
+        return self.tabulateFileNameWithLinesOfCode(fileDetails)
+
+    def getHashTableContainingFileDetails(self):
+        listOfFiles = FileGrouper(os.getcwd()).getSameTypeFiles(self.fileExtension)
+        return FileSLOCHashTable(listOfFiles).getTable()
+
+    def tabulateFileNameWithLinesOfCode(self, hashTable):
+        tableData = []
+        for item in hashTable:
+            key = list(item.keys())[0]
+            value = list(item.values())[0]
+            tableData.append([key, value])
+        return tabulate.tabulate(tableData, headers=["FILE", "NUMBER OF LINES"], tablefmt="grid")
 
 
 class FileGrouper:
