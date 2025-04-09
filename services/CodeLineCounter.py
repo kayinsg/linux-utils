@@ -22,7 +22,7 @@ class FileGrouper:
         return False
 
 
-class LineCounter:
+class FileSLOCHashTable:
     def __init__(self, listOfFiles):
         self.listOfFiles = listOfFiles
 
@@ -42,10 +42,10 @@ class LineCounter:
         ).stdout.strip()
 
     def getFileSLOCHashTableWithTotals(self, fileSLOCHashTableWithoutTotals):
-        return FileSLOCHashTable(fileSLOCHashTableWithoutTotals).finalizeTable()
+        return FileSLOCHashTableWithTotals(fileSLOCHashTableWithoutTotals).finalizeTable()
 
 
-class FileSLOCHashTable:
+class FileSLOCHashTableWithTotals:
     def __init__(self, fileSLOCHashTableWithoutTotals):
         self.fileSLOCHashTableWithoutTotals = fileSLOCHashTableWithoutTotals
 
