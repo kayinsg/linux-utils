@@ -53,15 +53,15 @@ class FileSLOCHashTable:
         total = self.summateTotalLineNumbersForAllFileSLOC(self.fileSLOCHashTableWithoutTotals)
         return self.getFinalHashTableForFileSLOC(self.fileSLOCHashTableWithoutTotals, total)
 
-    def getFinalHashTableForFileSLOC(self, fileSLOCHashTableWithoutTotals, total):
-        total = self.summateTotalLineNumbersForAllFileSLOC(fileSLOCHashTableWithoutTotals)
-        fileSLOCHashTableWithoutTotals.append({'TOTAL': total})
-
-        return fileSLOCHashTableWithoutTotals
-
     def summateTotalLineNumbersForAllFileSLOC(self, fileSLOCHashTableWithoutTotals):
         total = 0
         for item in fileSLOCHashTableWithoutTotals:
             for value in item.values():
                 total += value
         return total
+
+    def getFinalHashTableForFileSLOC(self, fileSLOCHashTableWithoutTotals, total):
+        total = self.summateTotalLineNumbersForAllFileSLOC(fileSLOCHashTableWithoutTotals)
+        fileSLOCHashTableWithoutTotals.append({'TOTAL': total})
+
+        return fileSLOCHashTableWithoutTotals
