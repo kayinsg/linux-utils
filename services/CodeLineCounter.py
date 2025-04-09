@@ -1,6 +1,7 @@
 import os
 import subprocess
 
+
 class FileGrouper:
     def __init__(self, directory):
         self.directory = directory
@@ -26,7 +27,7 @@ class FileSLOCHashTable:
     def __init__(self, listOfFiles):
         self.listOfFiles = listOfFiles
 
-    def getNumber(self):
+    def getTable(self):
         fileSLOCHashTableWithoutTotals = list(map(self.aggregateFileWithSLOC, self.listOfFiles))
         return self.getFileSLOCHashTableWithTotals(fileSLOCHashTableWithoutTotals)
 

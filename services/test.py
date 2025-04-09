@@ -29,7 +29,7 @@ class SourceCodeRetrievalTest(unittest.TestCase):
                 self.listOfFiles = listOfFiles
 
             def getNumber(self):
-                return super().getNumber()
+                return super().getTable()
 
             def getlineCount(self, file):
                 if file:
@@ -49,7 +49,7 @@ class SourceCodeRetrievalTest(unittest.TestCase):
 
         ]
 
-        listOfLinesPerFile = FakeLineCounter(listOfFiles).getNumber()
+        listOfLinesPerFile = FakeLineCounter(listOfFiles).getTable()
 
         self.assertEqual(listOfLinesPerFile, output)
 
