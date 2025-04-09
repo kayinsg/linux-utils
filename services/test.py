@@ -21,4 +21,40 @@ class SourceCodeRetrievalTest(unittest.TestCase):
 
         self.assertEqual(relevantCodeFileNames, [ 'c.py', 'd.py' ])
 
+    def testShouldGetSLOCForeachFile(self):
+
+        class FakeLineCounter:
+            def __init__(self, listOfFiles):
+                self.listOfFiles = listOfFiles
+
+            def getNumber(self):
+                filesWithNumberOfLines = [ ]
+                for file in self.listOfFiles:
+                    numberOfLinesInFile = self.getlineCount(file)
+                    fileHash = {file: numberOfLinesInFile}
+                    filesWithNumberOfLines.append(fileHash)
+                return filesWithNumberOfLines
+
+            def getlineCount(self, file):
+                if file:
+                    return 10
+                return 10
+
+
+        listOfFiles = ['example1.txt', 'mergesort.cpp', 'krralgorithm.py', 'django.py', 'react.js', 'init.lua']
+        output = [
+            {"example1.txt": 10},
+            {"mergesort.cpp": 10},
+            {"krralgorithm.py": 10},
+            {"django.py": 10},
+            {"react.js": 10},
+            {"init.lua": 10}
+        ]
+
+        listOfLinesPerFile = FakeLineCounter(listOfFiles).getNumber()
+
+        self.assertEqual(listOfLinesPerFile, output)
+
+
+
 unittest.main(testRunner=ColourTextTestRunner())
