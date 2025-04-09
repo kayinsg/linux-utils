@@ -26,16 +26,27 @@ class LineCounter:
     def __init__(self, listOfFiles):
         self.listOfFiles = listOfFiles
 
-    def getNumber(self):
-        return list(map(self.aggregateFileWithSLOC, self.listOfFiles))
-
-    def aggregateFileWithSLOC(self, file):
-        numberOfLinesInFile = self.getlineCount(file)
-        return {file: numberOfLinesInFile}
-
-    def getlineCount(self, file):
+    @staticmethod
+    def getlineCount(file):
         return subprocess.run(
             ['wc', '-l', f'{file}'],
             capture_output=True,
             text=True
         ).stdout.strip()
+
+    def getNumber(self):
+        rawHash = list(map(self.aggregateFileWithSLOC, self.listOfFiles))
+        return self.getTotalForLineNumbers(rawHash)
+
+    def aggregateFileWithSLOC(self, file):
+        numberOfLinesInFile = self.getlineCount(file)
+        return {file: numberOfLinesInFile}
+
+    def getTotalForLineNumbers(self, inputData):
+        total = 0
+        for item in inputData:
+            for value in item.values():
+                total += value
+        output = inputData.copy()
+        output.append({'TOTAL': total})
+        return output
