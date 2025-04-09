@@ -1,21 +1,16 @@
 import os
-import subprocess
 
 class FileGrouper:
-    def __init__(self, extension):
-        self.extension = extension
+    def __init__(self, directory):
+        self.directory = directory
 
-    def getSameTypeFiles(self):
-        currentDirectory = self.getCurrentDirectory()
-        filesInCurrentDirectory = self.getFilesInCurrentDirectory(currentDirectory)
-        path =  {currentDirectory: filesInCurrentDirectory}
-        return self.getSimilarFilesInPath(path, self.extension)
+    def getSameTypeFiles(self, extension):
+        filesInCurrentDirectory = self.getFilesInCurrentDirectory()
+        path =  {self.directory: filesInCurrentDirectory}
+        return self.getSimilarFilesInPath(path, extension)
 
-    def getCurrentDirectory(self):
-        return subprocess.run('pwd', capture_output=True, text=True).stdout.strip()
-
-    def getFilesInCurrentDirectory(self, directory):
-        return os.listdir(directory)
+    def getFilesInCurrentDirectory(self):
+        return os.listdir(self.directory)
 
     def getSimilarFilesInPath(self, path, extension):
         result = []
@@ -24,3 +19,4 @@ class FileGrouper:
                 if f.endswith('.' + extension):
                     result.append(f)
         return result
+
