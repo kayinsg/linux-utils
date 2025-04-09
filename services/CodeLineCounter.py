@@ -35,14 +35,29 @@ class FileSLOCHashTable:
         return {file: numberOfLinesInFile}
 
     def getlineCount(self, file):
+        return LineCounter(file).get()
+
+    def getFileSLOCHashTableWithTotals(self, fileSLOCHashTableWithoutTotals):
+        return FileSLOCHashTableWithTotals(fileSLOCHashTableWithoutTotals).finalizeTable()
+
+
+class LineCounter:
+    def __init__(self, file):
+        self.file = file
+
+    def get(self):
+        numberOfLinesWithFileName = self.getNumberOfLinesDetails(self.file)
+        return self.getOnlyTheFileNumber(numberOfLinesWithFileName)
+
+    def getNumberOfLinesDetails(self, file):
         return subprocess.run(
             ['wc', '-l', f'{file}'],
             capture_output=True,
             text=True
         ).stdout.strip()
 
-    def getFileSLOCHashTableWithTotals(self, fileSLOCHashTableWithoutTotals):
-        return FileSLOCHashTableWithTotals(fileSLOCHashTableWithoutTotals).finalizeTable()
+    def getOnlyTheFileNumber(self, numberOfLinesWithFileName):
+        return int(numberOfLinesWithFileName.split()[0])
 
 
 class FileSLOCHashTableWithTotals:
