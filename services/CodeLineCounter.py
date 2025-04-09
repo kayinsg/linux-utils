@@ -26,14 +26,6 @@ class LineCounter:
     def __init__(self, listOfFiles):
         self.listOfFiles = listOfFiles
 
-    @staticmethod
-    def getlineCount(file):
-        return subprocess.run(
-            ['wc', '-l', f'{file}'],
-            capture_output=True,
-            text=True
-        ).stdout.strip()
-
     def getNumber(self):
         fileSLOCHashTableWithoutTotals = list(map(self.aggregateFileWithSLOC, self.listOfFiles))
         return self.getFileSLOCHashTableWithTotals(fileSLOCHashTableWithoutTotals)
@@ -41,6 +33,13 @@ class LineCounter:
     def aggregateFileWithSLOC(self, file):
         numberOfLinesInFile = self.getlineCount(file)
         return {file: numberOfLinesInFile}
+
+    def getlineCount(self, file):
+        return subprocess.run(
+            ['wc', '-l', f'{file}'],
+            capture_output=True,
+            text=True
+        ).stdout.strip()
 
     def getFileSLOCHashTableWithTotals(self, fileSLOCHashTableWithoutTotals):
         return FileSLOCHashTable(fileSLOCHashTableWithoutTotals).finalizeTable()
