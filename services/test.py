@@ -2,6 +2,7 @@ import unittest
 from CodeLineCounter import FileGrouper, LineCounter
 from colour_runner.runner import ColourTextTestRunner
 
+
 class SourceCodeRetrievalTest(unittest.TestCase):
 
     def testShouldGetListOfFilesThatAreTheSameType(self):
@@ -43,13 +44,14 @@ class SourceCodeRetrievalTest(unittest.TestCase):
             {"krralgorithm.py": 10},
             {"django.py": 10},
             {"react.js": 10},
-            {"init.lua": 10}
+            {"init.lua": 10},
+            {'TOTAL': 60}
+
         ]
 
         listOfLinesPerFile = FakeLineCounter(listOfFiles).getNumber()
 
         self.assertEqual(listOfLinesPerFile, output)
-
 
 
 unittest.main(testRunner=ColourTextTestRunner())
