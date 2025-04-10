@@ -33,23 +33,23 @@ class SourceCodeRetrievalTest(unittest.TestCase):
 
             def aggregateFileWithSLOC(self):
                 return [
-                    {"example1.txt": 10},
-                    {"mergesort.cpp": 10},
-                    {"krralgorithm.py": 10},
-                    {"django.py": 10},
-                    {"react.js": 10},
-                    {"init.lua": 10}
+                    {"example1.txt": 23},
+                    {"mergesort.cpp": 57},
+                    {"krralgorithm.py": 43},
+                    {"django.py": 79},
+                    {"react.js": 91},
+                    {"init.lua": 89}
                     ]
 
         listOfFiles = [ ]
         output =[
-            {"example1.txt": 10},
-            {"mergesort.cpp": 10},
-            {"krralgorithm.py": 10},
-            {"django.py": 10},
-            {"react.js": 10},
-            {"init.lua": 10},
-            {'TOTAL': 60},
+            {"example1.txt": 23},
+            {"mergesort.cpp": 57},
+            {"krralgorithm.py": 43},
+            {"django.py": 79},
+            {"react.js": 91},
+            {"init.lua": 89},
+            {'TOTAL': 382},
         ]
         lineCounter = ""
 
