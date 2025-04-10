@@ -64,11 +64,9 @@ class FileSLOCHashTable:
 
 
 class LineCounter:
-    def __init__(self, file):
-        self.file = file
 
-    def get(self):
-        numberOfLinesWithFileName = self.getNumberOfLinesDetails(self.file)
+    def get(self, file):
+        numberOfLinesWithFileName = self.getNumberOfLinesDetails(file)
         return self.getOnlyTheLineNumber(numberOfLinesWithFileName)
 
     def getNumberOfLinesDetails(self, file):
