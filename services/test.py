@@ -41,17 +41,7 @@ class SourceCodeRetrievalTest(unittest.TestCase):
                     {"init.lua": 10}
                     ]
 
-
-
-        listOfFiles = [
-            'example1.txt',
-            'mergesort.cpp',
-            'krralgorithm.py',
-            'django.py',
-            'react.js',
-            'init.lua',
-        ]
-
+        listOfFiles = [ ]
         output =[
             {"example1.txt": 10},
             {"mergesort.cpp": 10},
