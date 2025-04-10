@@ -50,7 +50,7 @@ class FileSLOCHashTable:
         self.listOfFiles = listOfFiles
 
     def getTable(self):
-        fileSLOCHashTableWithoutTotals = list(map(self.aggregateFileWithSLOC, self.listOfFiles))
+        fileSLOCHashTableWithoutTotals = self.aggregateFileWithSLOC()
         return self.getFileSLOCHashTableWithTotals(fileSLOCHashTableWithoutTotals)
 
     def aggregateFileWithSLOC(self, file):
