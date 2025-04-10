@@ -1,5 +1,5 @@
 import unittest
-from CodeLineCounter import FileGrouper, FileSLOCHashTable, LineCounter
+from CodeLineCounter import FileGrouper, FileSLOCHashTables, FileLineCounter
 from colour_runner.runner import ColourTextTestRunner
 
 
@@ -11,25 +11,25 @@ class SourceCodeRetrievalTest(unittest.TestCase):
             def __init__(self, directory):
                 self.directory = directory
 
-            def getSameTypeFiles(self, extension):
-                return super().getSameTypeFiles(extension)
+            def getFiles(self, extension):
+                return super().getFiles(extension)
             
             def getFilesInCurrentDirectory(self):
                 return ['a.txt', 'b.cpp', 'c.py', 'd.py', 'e.js', 'f.lua']
 
         directory =  "/home/user1/Documents"
-        relevantCodeFileNames = FakeFileGrouper(directory).getSameTypeFiles('py')
+        relevantCodeFileNames = FakeFileGrouper(directory).getFiles('py')
 
         self.assertEqual(relevantCodeFileNames, [ 'c.py', 'd.py' ])
 
     def testShouldGetTotalNumberOfLinesForSLOCHashTable(self):
 
-        class FakeFileSLOCHashTable(FileSLOCHashTable):
+        class FakeFileSLOCHashTables(FileSLOCHashTables):
             def __init__(self, listOfFiles, lineCounter):
                 super().__init__(listOfFiles, lineCounter)
 
-            def getTable(self):
-                return super().getTable()
+            def getTables(self):
+                return super().getTables()
 
             def aggregateFileWithSLOC(self):
                 return [
@@ -53,14 +53,14 @@ class SourceCodeRetrievalTest(unittest.TestCase):
         ]
         lineCounter = ""
 
-        result = FakeFileSLOCHashTable(listOfFiles, lineCounter).getTable()
+        result = FakeFileSLOCHashTables(listOfFiles, lineCounter).getTables()
 
         self.assertEqual(result, output)
 
 
     def testShouldConvertLinuxCommandOutputToHashmap(self):
 
-        class FakeLineCounter(LineCounter):
+        class FakeFileLineCounter(FileLineCounter):
 
             def getNumberOfLinesDetails(self, file):
                 if file:
@@ -69,7 +69,7 @@ class SourceCodeRetrievalTest(unittest.TestCase):
         fileName = 'mergesort.cpp'
         output = {'mergesort.cpp': 10}
 
-        result = FakeLineCounter().get(fileName)
+        result = FakeFileLineCounter().get(fileName)
 
         self.assertEqual(result, output)
 

@@ -9,15 +9,15 @@ class SLOCTabulator:
         self.directory = os.getcwd()
 
     def tabulateData(self):
-        fileDetails = self.getHashTableContainingFileDetails()
-        return self.tabulateFileNameWithLinesOfCode(fileDetails)
+        fileDetails = self.getHashTablesContainingFileNamesAndSLOC()
+        return self.tabulateFileNameWithSourceLinesOfCode(fileDetails)
 
-    def getHashTableContainingFileDetails(self):
-        listOfFiles = FileGrouper(self.directory).getSameTypeFiles(self.fileExtension)
-        lineCounter = LineCounter()
-        return FileSLOCHashTable(listOfFiles, lineCounter).getTable()
+    def getHashTablesContainingFileNamesAndSLOC(self):
+        listOfFiles = FileGrouper(self.directory).getFiles(self.fileExtension)
+        lineCounter = FileLineCounter()
+        return FileSLOCHashTables(listOfFiles, lineCounter).getTables()
 
-    def tabulateFileNameWithLinesOfCode(self, hashTable):
+    def tabulateFileNameWithSourceLinesOfCode(self, hashTable):
         tableData = []
         for item in hashTable:
             key = list(item.keys())[0]
@@ -30,7 +30,7 @@ class FileGrouper:
     def __init__(self, directory):
         self.directory = directory
 
-    def getSameTypeFiles(self, extension):
+    def getFiles(self, extension):
         filesInCurrentDirectory = self.getFilesInCurrentDirectory()
         return self.getSimilarFilesInPath(filesInCurrentDirectory, extension)
 
@@ -47,12 +47,12 @@ class FileGrouper:
         return False
 
 
-class FileSLOCHashTable:
+class FileSLOCHashTables:
     def __init__(self, listOfFiles, lineCounter):
         self.listOfFiles = listOfFiles
         self.lineCounter = lineCounter
 
-    def getTable(self):
+    def getTables(self):
         fileSLOCHashTableWithoutTotals = self.aggregateFileWithSLOC()
         return self.getFileSLOCHashTableWithTotals(fileSLOCHashTableWithoutTotals)
 
@@ -64,7 +64,7 @@ class FileSLOCHashTable:
         return FileSLOCHashTableWithTotals(fileSLOCHashTableWithoutTotals).finalizeTable()
 
 
-class LineCounter:
+class FileLineCounter:
 
     def get(self, file):
         numberOfLinesWithFileName = self.getNumberOfLinesDetails(file)
