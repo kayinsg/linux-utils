@@ -89,18 +89,20 @@ class FileLineCounter:
 class FileSLOCHashTableWithTotals:
     def __init__(self, fileSLOCHashTableWithoutTotals):
         self.fileSLOCHashTableWithoutTotals = fileSLOCHashTableWithoutTotals
+        self.total = 0
 
     def finalizeTable(self):
-        total = self.sumFileLineNumbers()
-        self.addTotalLineNumbersToHashTable(total)
+        self.sumFileLineNumbers()
+        self.addTotalLineNumbersToHashTable()
         return self.fileSLOCHashTableWithoutTotals
 
     def sumFileLineNumbers(self):
-        total = 0
-        for item in self.fileSLOCHashTableWithoutTotals:
-            for value in item.values():
-                total += value
-        return total
+        getTotalLines = lambda hashmap: self.getTotalNumberOfLinesInFile(hashmap)
+        list(map(getTotalLines, self.fileSLOCHashTableWithoutTotals))
 
-    def addTotalLineNumbersToHashTable(self, total):
-        self.fileSLOCHashTableWithoutTotals.append({'TOTAL': total})
+    def getTotalNumberOfLinesInFile(self, hashmap):
+        for value in hashmap.values():
+            self.total += value
+
+    def addTotalLineNumbersToHashTable(self):
+        self.fileSLOCHashTableWithoutTotals.append({'TOTAL': self.total})
