@@ -6,13 +6,14 @@ import tabulate
 class SLOCTabulator:
     def __init__(self, fileExtension):
         self.fileExtension = fileExtension
+        self.directory = os.getcwd()
 
     def tabulateData(self):
         fileDetails = self.getHashTableContainingFileDetails()
         return self.tabulateFileNameWithLinesOfCode(fileDetails)
 
     def getHashTableContainingFileDetails(self):
-        listOfFiles = FileGrouper(os.getcwd()).getSameTypeFiles(self.fileExtension)
+        listOfFiles = FileGrouper(self.directory).getSameTypeFiles(self.fileExtension)
         lineCounter = LineCounter()
         return FileSLOCHashTable(listOfFiles, lineCounter).getTable()
 
