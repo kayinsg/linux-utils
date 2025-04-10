@@ -13,7 +13,8 @@ class SLOCTabulator:
 
     def getHashTableContainingFileDetails(self):
         listOfFiles = FileGrouper(os.getcwd()).getSameTypeFiles(self.fileExtension)
-        return FileSLOCHashTable(listOfFiles).getTable()
+        lineCounter = LineCounter()
+        return FileSLOCHashTable(listOfFiles, lineCounter).getTable()
 
     def tabulateFileNameWithLinesOfCode(self, hashTable):
         tableData = []
@@ -46,19 +47,17 @@ class FileGrouper:
 
 
 class FileSLOCHashTable:
-    def __init__(self, listOfFiles):
+    def __init__(self, listOfFiles, lineCounter):
         self.listOfFiles = listOfFiles
+        self.lineCounter = lineCounter
 
     def getTable(self):
         fileSLOCHashTableWithoutTotals = self.aggregateFileWithSLOC()
         return self.getFileSLOCHashTableWithTotals(fileSLOCHashTableWithoutTotals)
 
-    def aggregateFileWithSLOC(self, file):
-        numberOfLinesInFile = self.getlineCount(file)
-        return {file: numberOfLinesInFile}
-
-    def getlineCount(self, file):
-        return LineCounter(file).get()
+    def aggregateFileWithSLOC(self):
+        getFileSLOCHashTableWithoutTotals = lambda file: self.lineCounter.get(file)
+        return list(map(getFileSLOCHashTableWithoutTotals, self.listOfFiles))
 
     def getFileSLOCHashTableWithTotals(self, fileSLOCHashTableWithoutTotals):
         return FileSLOCHashTableWithTotals(fileSLOCHashTableWithoutTotals).finalizeTable()
