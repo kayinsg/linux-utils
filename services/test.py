@@ -68,4 +68,19 @@ class SourceCodeRetrievalTest(unittest.TestCase):
         self.assertEqual(result, output)
 
 
+    def testShouldCongregateString(self):
+
+        class FakeLineCounter(LineCounter):
+
+            def getNumberOfLinesDetails(self, file):
+                if file:
+                    return '10 mergesort.cpp'
+
+        fileName = 'mergesort.cpp'
+        output = {'mergesort.cpp': 10}
+
+        result = FakeLineCounter().get(fileName)
+
+        self.assertEqual(result, output)
+
 unittest.main(testRunner=ColourTextTestRunner())
