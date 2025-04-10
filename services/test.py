@@ -1,5 +1,5 @@
 import unittest
-from CodeLineCounter import FileGrouper, FileSLOCHashTable
+from CodeLineCounter import FileGrouper, FileSLOCHashTable, LineCounter
 from colour_runner.runner import ColourTextTestRunner
 
 
@@ -24,34 +24,48 @@ class SourceCodeRetrievalTest(unittest.TestCase):
 
     def testShouldGetSLOCForeachFile(self):
 
-        class FakeLineCounter(FileSLOCHashTable):
-            def __init__(self, listOfFiles):
-                self.listOfFiles = listOfFiles
+        class FakeFileSLOCHashTable(FileSLOCHashTable):
+            def __init__(self, listOfFiles, lineCounter):
+                super().__init__(listOfFiles, lineCounter)
 
-            def getNumber(self):
+            def getTable(self):
                 return super().getTable()
 
-            def getlineCount(self, file):
-                if file:
-                    return 10
-                return 10
+            def aggregateFileWithSLOC(self):
+                return [
+                    {"example1.txt": 10},
+                    {"mergesort.cpp": 10},
+                    {"krralgorithm.py": 10},
+                    {"django.py": 10},
+                    {"react.js": 10},
+                    {"init.lua": 10}
+                    ]
 
 
-        listOfFiles = ['example1.txt', 'mergesort.cpp', 'krralgorithm.py', 'django.py', 'react.js', 'init.lua']
-        output = [
+
+        listOfFiles = [
+            'example1.txt',
+            'mergesort.cpp',
+            'krralgorithm.py',
+            'django.py',
+            'react.js',
+            'init.lua',
+        ]
+
+        output =[
             {"example1.txt": 10},
             {"mergesort.cpp": 10},
             {"krralgorithm.py": 10},
             {"django.py": 10},
             {"react.js": 10},
             {"init.lua": 10},
-            {'TOTAL': 60}
-
+            {'TOTAL': 60},
         ]
+        lineCounter = ""
 
-        listOfLinesPerFile = FakeLineCounter(listOfFiles).getTable()
+        result = FakeFileSLOCHashTable(listOfFiles, lineCounter).getTable()
 
-        self.assertEqual(listOfLinesPerFile, output)
+        self.assertEqual(result, output)
 
 
 unittest.main(testRunner=ColourTextTestRunner())
