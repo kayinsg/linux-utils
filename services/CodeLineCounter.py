@@ -67,7 +67,9 @@ class LineCounter:
 
     def get(self, file):
         numberOfLinesWithFileName = self.getNumberOfLinesDetails(file)
-        return self.getOnlyTheLineNumber(numberOfLinesWithFileName)
+        fileName = self.getFileName(numberOfLinesWithFileName)
+        lineNumber = self.getOnlyTheLineNumber(numberOfLinesWithFileName)
+        return {fileName: lineNumber}
 
     def getNumberOfLinesDetails(self, file):
         return subprocess.run(
@@ -75,6 +77,9 @@ class LineCounter:
             capture_output=True,
             text=True
         ).stdout.strip()
+
+    def getFileName(self, numberOfLinesWithFileName):
+        return numberOfLinesWithFileName.split()[1]
 
     def getOnlyTheLineNumber(self, numberOfLinesWithFileName):
         return int(numberOfLinesWithFileName.split()[0])
