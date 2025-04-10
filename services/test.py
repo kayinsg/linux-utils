@@ -22,7 +22,7 @@ class SourceCodeRetrievalTest(unittest.TestCase):
 
         self.assertEqual(relevantCodeFileNames, [ 'c.py', 'd.py' ])
 
-    def testShouldGetSLOCForeachFile(self):
+    def testShouldGetTotalNumberOfLinesForSLOCHashTable(self):
 
         class FakeFileSLOCHashTable(FileSLOCHashTable):
             def __init__(self, listOfFiles, lineCounter):
@@ -58,7 +58,7 @@ class SourceCodeRetrievalTest(unittest.TestCase):
         self.assertEqual(result, output)
 
 
-    def testShouldCongregateString(self):
+    def testShouldConvertLinuxCommandOutputToHashmap(self):
 
         class FakeLineCounter(LineCounter):
 
