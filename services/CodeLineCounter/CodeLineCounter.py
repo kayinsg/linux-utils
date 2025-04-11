@@ -77,11 +77,15 @@ class FileSLOCHashTables:
 
     def getTables(self):
         fileSLOCHashTableWithoutTotals = self.aggregateFileWithSLOC()
-        return self.getFileSLOCHashTableWithTotals(fileSLOCHashTableWithoutTotals)
+        sortedHashTables = self.sortLineNumbersInSpecifiedOrder(fileSLOCHashTableWithoutTotals)
+        return self.getFileSLOCHashTableWithTotals(sortedHashTables)
 
     def aggregateFileWithSLOC(self):
         getFileSLOCHashTableWithoutTotals = lambda file: self.lineCounter.get(file)
         return list(map(getFileSLOCHashTableWithoutTotals, self.listOfFiles))
+
+    def sortLineNumbersInSpecifiedOrder(self, fileSLOCHashTableWithoutTotals):
+        return LineNumberSorter(fileSLOCHashTableWithoutTotals).sortHashtables("descending")
 
     def getFileSLOCHashTableWithTotals(self, fileSLOCHashTableWithoutTotals):
         return FileSLOCHashTableWithTotals(fileSLOCHashTableWithoutTotals).finalizeTable()
@@ -107,6 +111,18 @@ class FileLineCounter:
 
     def getOnlyTheLineNumber(self, numberOfLinesWithFileName):
         return int(numberOfLinesWithFileName.split()[0])
+
+
+class LineNumberSorter:
+    def __init__(self, hashMapList):
+        self.hashMapList = hashMapList
+
+    def sortHashtables(self, sortingOrder):
+        if sortingOrder == "descending":
+            return sorted(self.hashMapList, key=self.sortInDescendingOrder)
+
+    def sortInDescendingOrder(self, hashMap):
+        return -list(hashMap.values())[0]
 
 
 class FileSLOCHashTableWithTotals:
