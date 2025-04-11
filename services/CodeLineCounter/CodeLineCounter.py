@@ -53,7 +53,12 @@ class FileGrouper:
         return self.getSimilarFilesInPath(filesInCurrentDirectory, extension)
 
     def getFilesInCurrentDirectory(self):
-        return os.listdir(self.directory)
+        return subprocess.run(
+            ['rg', '--files'],
+            check=True,
+            capture_output=True,
+            text=True
+        ).stdout.splitlines()
 
     def getSimilarFilesInPath(self, files, extension):
         fileMatchesExtension = lambda file: self.fileMatchesExtension(file, extension)
