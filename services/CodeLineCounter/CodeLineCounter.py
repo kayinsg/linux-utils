@@ -10,20 +10,38 @@ class SLOCTabulator:
 
     def tabulateData(self):
         fileDetails = self.getHashTablesContainingFileNamesAndSLOC()
-        return self.tabulateFileNameWithSourceLinesOfCode(fileDetails)
+        tableData = self.convertListOfHashMapsToNestedList(fileDetails)
+        return self.tabulateFileNameWithSourceLinesOfCode(tableData)
 
     def getHashTablesContainingFileNamesAndSLOC(self):
         listOfFiles = FileGrouper(self.directory).getFiles(self.fileExtension)
         lineCounter = FileLineCounter()
         return FileSLOCHashTables(listOfFiles, lineCounter).getTables()
 
-    def tabulateFileNameWithSourceLinesOfCode(self, hashTable):
-        tableData = []
-        for item in hashTable:
-            key = list(item.keys())[0]
-            value = list(item.values())[0]
-            tableData.append([key, value])
+    def convertListOfHashMapsToNestedList(self, hashTables):
+        return HashmapToNestedList(hashTables).convert()
+
+    def tabulateFileNameWithSourceLinesOfCode(self, tableData):
         return tabulate.tabulate(tableData, headers=["FILE", "NUMBER OF LINES"], tablefmt="grid")
+
+
+class HashmapToNestedList:
+    def __init__(self, hashTables):
+        self.hashTables = hashTables
+        self.tableData = [ ]
+
+    def convert(self):
+        fileNameSLOCList = list(map(self.createListOutofHashmap, self.hashTables))
+        self.addListToTableData(fileNameSLOCList)
+        return self.tableData
+
+    def createListOutofHashmap(self, hashmap):
+        key = list(hashmap.keys())[0]
+        value = list(hashmap.values())[0]
+        return [ key, value ]
+
+    def addListToTableData(self, fileNameSLOCList):
+        self.tableData.extend(fileNameSLOCList)
 
 
 class FileGrouper:
