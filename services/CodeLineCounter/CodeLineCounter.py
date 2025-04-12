@@ -9,12 +9,15 @@ class SLOCTabulator:
         self.directory = os.getcwd()
 
     def tabulateData(self):
-        fileDetails = self.getHashTablesContainingFileNamesAndSLOC()
+        listOfFiles = self.getListOfFilesThatHaveTheSameExtension()
+        fileDetails = self.getHashTablesContainingFileNamesAndSLOC(listOfFiles)
         tableData = self.convertListOfHashMapsToNestedList(fileDetails)
         return self.tabulateFileNameWithSourceLinesOfCode(tableData)
 
-    def getHashTablesContainingFileNamesAndSLOC(self):
-        listOfFiles = FileGrouper(self.directory).getFiles(self.fileExtension)
+    def getListOfFilesThatHaveTheSameExtension(self):
+        return FileGrouper(self.directory).getFiles(self.fileExtension)
+
+    def getHashTablesContainingFileNamesAndSLOC(self, listOfFiles):
         lineCounter = FileLineCounter()
         return FileSLOCHashTables(listOfFiles, lineCounter).getTables()
 
