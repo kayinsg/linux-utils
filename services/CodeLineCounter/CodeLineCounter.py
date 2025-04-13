@@ -1,6 +1,6 @@
 import os
 import subprocess
-import tabulate
+from tabulate import tabulate
 
 
 class SLOCTabulator:
@@ -25,7 +25,7 @@ class SLOCTabulator:
         return HashmapToNestedList(hashTables).convert()
 
     def tabulateFileNameWithSourceLinesOfCode(self, tableData):
-        return tabulate.tabulate(tableData, headers=["FILE", "NUMBER OF LINES"], tablefmt="grid")
+        return tabulate(tableData, headers=["FILE", "NUMBER OF LINES"], tablefmt="grid")
 
 
 class HashmapToNestedList:
