@@ -1,7 +1,6 @@
-from NewFileSelector import CommandLineParser, FileSearcher, UserMenu, Clipboard, FileClassifier, TextEditor
 import argparse
 import sys
-from NewFileSelector import (
+from FileSelector import (
     CommandLineParser,
     FileSearcher,
     UserMenu,
