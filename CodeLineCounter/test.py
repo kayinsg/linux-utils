@@ -40,15 +40,14 @@ class SourceCodeRetrievalTest(unittest.TestCase):
                     {"init.lua": 89}
                     ]
 
-        # TO DO: ADAPT THE NEW OUPUT with total to the sorted functionality
         listOfFiles = [ ]
         output =[
-            {"example1.txt": 23},
-            {"mergesort.cpp": 57},
-            {"krralgorithm.py": 43},
-            {"django.py": 79},
             {"react.js": 91},
             {"init.lua": 89},
+            {"django.py": 79},
+            {"mergesort.cpp": 57},
+            {"krralgorithm.py": 43},
+            {"example1.txt": 23},
             {'TOTAL': 382},
         ]
         lineCounter = ""
