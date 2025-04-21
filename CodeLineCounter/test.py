@@ -1,6 +1,6 @@
 import unittest
-from CodeLineCounter import FileGrouper, FileSLOCHashTables, FileLineCounter, LineNumberSorter
 from colour_runner.runner import ColourTextTestRunner
+from CodeLineCounter import FileGrouper, FileSLOCHashTables, FileLineCounter, LineNumberSorter
 
 class SourceCodeRetrievalTest(unittest.TestCase):
 
@@ -96,5 +96,5 @@ class SourceCodeRetrievalTest(unittest.TestCase):
 
         self.assertEqual(result, outputData)
 
-
-unittest.main(testRunner=ColourTextTestRunner())
+if __name__ == '__main__':
+    unittest.main(testRunner=ColourTextTestRunner())
